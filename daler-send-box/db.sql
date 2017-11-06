@@ -1,5 +1,4 @@
 
----------profiel---------------
 
 ---------groupMembership--------------
 drop table groupMembership cascade constraints;
@@ -13,6 +12,7 @@ create table groupMembership (
 	--add constraint for userID
 );
 	
+	
 ---------groups ----------
 drop table groups cascade constraints;
 create table groups (
@@ -24,7 +24,7 @@ create table groups (
 
 
 ---------messages---------
-drop table messages cascade CONSTRAINTS;
+drop table messages cascade constraint;
 create table messages (
 	msgID varchar2(20)
 	, fromID varchar2(20)
