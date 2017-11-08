@@ -1,3 +1,54 @@
+drop table profile cascade constraints; 
+CREATE TABLE PROFILE(
+	userID	varchar2(20),
+	name	varchar2(20) NOT NULL,
+	password	varchar2(20) NOT NULL,
+	date_of_birth	date,
+	lastLogin	timestamp,
+	constraint profile_pk primary key (userID)
+	deferrable initially immediate
+);
+
+drop table friends cascade constraints;
+CREATE TABLE friends(
+	userID1	varchar2(20),
+	userID2 varchar2(20),
+	JDate	date	NOT NULL,
+	message	varchar2(200),
+	constraint friends_pk primary key (userID1, userID2)
+	deferrable initially immediate,
+	constraint friends1_fk foreign key (userID1) references profile(userID)
+	deferrable initially immediate,
+	constraint friends2_fk foreign key (userID2) references profile(userID)
+    deferrable initially immediate
+);
+
+drop table pendingFriends cascade constraints;
+CREATE TABLE pendingFriends(
+	fromID	varchar2(20),
+	toID	varchar2(20),
+	message	varchar2(200),
+	constraint pendingF_pk	primary key (fromID, toID)
+	deferrable initially immediate,
+	constraint pendingF1_fk foreign key (fromID) references profile(userID)
+	deferrable initially immediate,
+	constraint pendingF2_fk foreign key (toID) references profile(userID)
+	deferrable initially immediate
+);
+
+drop table pendingGroupmembers cascade constraints; 
+CREATE TABLE pendingGroupmembers(
+	gID	varchar2(20),
+	userID	varchar2(20),
+	message	varchar2(20),
+	constraint pendingG_pk primary key (gID, userID)
+	deferrable initially immediate,
+	constraint pendingG1_fk foreign key (gID) references groups (gID)
+	deferrable initially immediate,
+	constraint pendingG2_fk foreign key (userID) references profile (userID)
+);
+
+
 
 
 ---------groupMembership--------------
@@ -8,8 +59,8 @@ create table groupMembership (
 	, role varchar2(20) default 'user'
 	, constraint pk_group_membership primary key (gID,userID)
 	, constraint ch_role check(role in ('manager', 'user'))
-	--add constraint gID
-	--add constraint for userID
+	, constraint fk_group foreign key (gID) references groups (gID) deferrable initially immediate
+	, constraint fk_user foreign key (userID) references profile(userID) deferrable initially immediate
 );
 	
 	
@@ -19,7 +70,7 @@ create table groups (
 	gID varchar2(20)
 	, name varchar2(50) not null 
 	, description varchar2(200) 
-	, constraint pk_groups primary key (gID)
+	, constraint pk_groups primary key (gID) deferrable initially immediate
 );
 
 
@@ -33,9 +84,9 @@ create table messages (
 	, toUserID varchar2(20)
 	, dateSent date not null 
 	, constraint pk_messages primary key (msgID)
-	--add constraint for fromID
-	--add constraint for toGroupID
-	--add constraint for toUserID
+	, constraint fk_from_profile foreign key (fromID) references profile(userID) deferrable initially immediate
+	, constraint fk_toUser_profile foreign key (toUserID) references profile(userID) deferrable initially immediate
+	, constraint fk_togroup_groups foreign key (toGroupID) references groups (gID) deferrable initially immediate
 );
 
 	
