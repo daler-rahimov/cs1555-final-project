@@ -1,0 +1,3 @@
+--if an user wants to send a message to the group
+--use a trigger to populate the message recipient table
+--with proper user id information as defined by group membership relations
