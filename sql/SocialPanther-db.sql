@@ -82,7 +82,7 @@ create table groups (
 
 
 ---------messages---------
-drop table messages cascade constraint;
+drop table messages cascade constraints;
 create table messages (
 	msgID varchar2(20)
 	, fromID varchar2(20)
@@ -96,4 +96,19 @@ create table messages (
 	, constraint fk_togroup_groups foreign key (toGroupID) references groups (gID) deferrable initially immediate on delete cascade
 );
 
-	
+--------messageRecipient--------
+--------------------------------
+/*
+Assumption:
+	1. For any message that any user receives there will be an entery added to this table 
+	even if a message sent through group messaging 
+	2. No message can be send to the same user twice, hence primary key (msgID, userID)  
+*/
+------------------------------ 
+drop table messageRecipient cascade constraints ;
+create table messageRecipient(
+	msgID varchar2(20)
+	, userID varchar2(20)
+	, constraint pk_messageRecipient primary key (msgID, userID)
+	, constraint fk_msgID foreign key (msgID) references messages(msgID) deferrable initially immediate
+);
