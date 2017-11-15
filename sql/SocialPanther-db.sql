@@ -96,8 +96,8 @@ create table messages (
 	, constraint fk_togroup_groups foreign key (toGroupID) references groups (gID) deferrable initially immediate on delete cascade
 );
 
---------messageRecipient--------
---------------------------------
+--------messageRecipient---------
+---------------------------------
 /*
 Assumption:
 	1. For any message that any user receives there will be an entery added to this table 
