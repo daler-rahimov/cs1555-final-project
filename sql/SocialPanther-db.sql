@@ -156,9 +156,11 @@ create or replace trigger dropUser
 create or replace trigger sendMessageToUser
 	after insert on messages
 	for each row 
-	begin
+    begin
+    IF :new.toUserID IS NOT NULL
+    THEN 
 		insert into messageRecipient values(:new.msgID, :new.toUserID);
+    END IF;
 	end;
 /
-
 -------------****EndTriggers***-----------------
