@@ -6,7 +6,7 @@ CREATE TABLE PROFILE(
 	date_of_birth	date,
 	lastLogin	timestamp,
 	constraint profile_pk primary key (userID)
-		deferrable initially immediate
+	deferrable initially immediate
 );
 
 drop table friends cascade constraints;
@@ -16,13 +16,11 @@ CREATE TABLE friends(
 	JDate	date	NOT NULL,
 	message	varchar2(200),
 	constraint friends_pk primary key (userID1, userID2)
-		deferrable initially immediate,
+	deferrable initially immediate,
 	constraint friends1_fk foreign key (userID1) references profile(userID)
-		deferrable initially immediate
-		on delete cascade,
+	deferrable initially immediate,
 	constraint friends2_fk foreign key (userID2) references profile(userID)
-		deferrable initially immediate
-		on delete cascade
+    deferrable initially immediate
 );
 
 drop table pendingFriends cascade constraints;
@@ -31,13 +29,11 @@ CREATE TABLE pendingFriends(
 	toID	varchar2(20),
 	message	varchar2(200),
 	constraint pendingF_pk	primary key (fromID, toID)
-		deferrable initially immediate,
+	deferrable initially immediate,
 	constraint pendingF1_fk foreign key (fromID) references profile(userID)
-		deferrable initially immediate
-		on delete cascade,
+	deferrable initially immediate,
 	constraint pendingF2_fk foreign key (toID) references profile(userID)
-		deferrable initially immediate
-		on delete cascade
+	deferrable initially immediate
 );
 
 drop table pendingGroupmembers cascade constraints; 
@@ -46,13 +42,10 @@ CREATE TABLE pendingGroupmembers(
 	userID	varchar2(20),
 	message	varchar2(20),
 	constraint pendingG_pk primary key (gID, userID)
-		deferrable initially immediate,
+	deferrable initially immediate,
 	constraint pendingG1_fk foreign key (gID) references groups (gID)
-		deferrable initially immediate
-		on delete cascade,
+	deferrable initially immediate,
 	constraint pendingG2_fk foreign key (userID) references profile (userID)
-		deferrable initially immediate
-		on delete cascade
 );
 
 
@@ -66,8 +59,8 @@ create table groupMembership (
 	, role varchar2(20) default 'user'
 	, constraint pk_group_membership primary key (gID,userID)
 	, constraint ch_role check(role in ('manager', 'user'))
-	, constraint fk_group foreign key (gID) references groups (gID) deferrable initially immediate on delete cascade
-	, constraint fk_user foreign key (userID) references profile(userID) deferrable initially immediate on delete cascade
+	, constraint fk_group foreign key (gID) references groups (gID) deferrable initially immediate
+	, constraint fk_user foreign key (userID) references profile(userID) deferrable initially immediate
 );
 	
 	
@@ -91,13 +84,13 @@ create table messages (
 	, toUserID varchar2(20)
 	, dateSent date not null 
 	, constraint pk_messages primary key (msgID)
-	, constraint fk_from_profile foreign key (fromID) references profile(userID) deferrable initially immediate on delete cascade
-	, constraint fk_toUser_profile foreign key (toUserID) references profile(userID) deferrable initially immediate on delete cascade
-	, constraint fk_togroup_groups foreign key (toGroupID) references groups (gID) deferrable initially immediate on delete cascade
+	, constraint fk_from_profile foreign key (fromID) references profile(userID) deferrable initially immediate
+	, constraint fk_toUser_profile foreign key (toUserID) references profile(userID) deferrable initially immediate
+	, constraint fk_togroup_groups foreign key (toGroupID) references groups (gID) deferrable initially immediate
 );
 
---------messageRecipient---------
----------------------------------
+--------messageRecipient--------
+--------------------------------
 /*
 Assumption:
 	1. For any message that any user receives there will be an entery added to this table 
@@ -106,9 +99,10 @@ Assumption:
 */
 ------------------------------ 
 drop table messageRecipient cascade constraints ;
-create table messageRecipient(
+create table messageRecipient (
 	msgID varchar2(20)
 	, userID varchar2(20)
 	, constraint pk_messageRecipient primary key (msgID, userID)
 	, constraint fk_msgID foreign key (msgID) references messages(msgID) deferrable initially immediate
-);
+)
+;
