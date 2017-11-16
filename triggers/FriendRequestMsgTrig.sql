@@ -2,16 +2,16 @@ create or replace trigger friendReqMsg
 	after insert on pendingFriends
 	for each row
 	DECLARE
-		msgID varchar(20);
+		nmsgID varchar(20);
     begin
     IF :new.message IS NOT NULL
     THEN 
-		SELECT to_char(count(msgID) + 1) INTO msgID
-		FROM messages
-		GROUP BY message;
+		SELECT to_char(count(msgID) + 1) INTO nmsgID
+		FROM messages;
 		
-		insert into message values(msgID,:new.fromID, :new.message, null, :new.toID, current_date);
-		insert into messageRecipient values(:new.msgID, :new.toID);
+		insert into messages (msgID, fromID, message, toUserID, dateSent) 
+		values(nmsgID,:new.fromID, :new.message, :new.toID, current_date);
+		--insert into messageRecipient values(nmsgID, :new.toID); not sure if this is covered by the other trigger
     END IF;
 	end;
 /
