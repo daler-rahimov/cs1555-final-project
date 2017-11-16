@@ -9,6 +9,16 @@ CREATE TABLE PROFILE(
 		deferrable initially immediate
 );
 
+---------groups ----------
+drop table groups cascade constraints;
+create table groups (
+	gID varchar2(20)
+	, name varchar2(50) not null 
+	, description varchar2(200) 
+	, constraint pk_groups primary key (gID) deferrable initially immediate
+);
+
+
 drop table friends cascade constraints;
 CREATE TABLE friends(
 	userID1	varchar2(20),
@@ -18,11 +28,9 @@ CREATE TABLE friends(
 	constraint friends_pk primary key (userID1, userID2)
 		deferrable initially immediate,
 	constraint friends1_fk foreign key (userID1) references profile(userID)
-		deferrable initially immediate
-		on delete cascade,
+		on delete cascade deferrable initially immediate,
 	constraint friends2_fk foreign key (userID2) references profile(userID)
-		deferrable initially immediate
-		on delete cascade
+		on delete cascade deferrable initially immediate
 );
 
 drop table pendingFriends cascade constraints;
@@ -33,12 +41,11 @@ CREATE TABLE pendingFriends(
 	constraint pendingF_pk	primary key (fromID, toID)
 		deferrable initially immediate,
 	constraint pendingF1_fk foreign key (fromID) references profile(userID)
-		deferrable initially immediate
-		on delete cascade,
+		on delete cascade deferrable initially immediate,
 	constraint pendingF2_fk foreign key (toID) references profile(userID)
-		deferrable initially immediate
-		on delete cascade
+		on delete cascade deferrable initially immediate
 );
+
 
 drop table pendingGroupmembers cascade constraints; 
 CREATE TABLE pendingGroupmembers(
@@ -48,11 +55,9 @@ CREATE TABLE pendingGroupmembers(
 	constraint pendingG_pk primary key (gID, userID)
 		deferrable initially immediate,
 	constraint pendingG1_fk foreign key (gID) references groups (gID)
-		deferrable initially immediate
-		on delete cascade,
+		on delete cascade deferrable initially immediate,
 	constraint pendingG2_fk foreign key (userID) references profile (userID)
-		deferrable initially immediate
-		on delete cascade
+		on delete cascade deferrable initially immediate
 );
 
 
@@ -66,20 +71,11 @@ create table groupMembership (
 	, role varchar2(20) default 'user'
 	, constraint pk_group_membership primary key (gID,userID)
 	, constraint ch_role check(role in ('manager', 'user'))
-	, constraint fk_group foreign key (gID) references groups (gID) deferrable initially immediate on delete cascade
-	, constraint fk_user foreign key (userID) references profile(userID) deferrable initially immediate on delete cascade
+	, constraint fk_group foreign key (gID) references groups (gID) on delete cascade deferrable initially immediate 
+	, constraint fk_user foreign key (userID) references profile(userID) on delete cascade deferrable initially immediate 
 );
 	
 	
----------groups ----------
-drop table groups cascade constraints;
-create table groups (
-	gID varchar2(20)
-	, name varchar2(50) not null 
-	, description varchar2(200) 
-	, constraint pk_groups primary key (gID) deferrable initially immediate
-);
-
 
 ---------messages---------
 drop table messages cascade constraints;
@@ -91,9 +87,9 @@ create table messages (
 	, toUserID varchar2(20)
 	, dateSent date not null 
 	, constraint pk_messages primary key (msgID)
-	, constraint fk_from_profile foreign key (fromID) references profile(userID) deferrable initially immediate on delete cascade
-	, constraint fk_toUser_profile foreign key (toUserID) references profile(userID) deferrable initially immediate on delete cascade
-	, constraint fk_togroup_groups foreign key (toGroupID) references groups (gID) deferrable initially immediate on delete cascade
+	, constraint fk_from_profile foreign key (fromID) references profile(userID)  on delete cascade deferrable initially immediate
+	, constraint fk_toUser_profile foreign key (toUserID) references profile(userID) on delete cascade deferrable initially immediate 
+	, constraint fk_togroup_groups foreign key (toGroupID) references groups (gID) on delete cascade deferrable initially immediate 
 );
 
 --------messageRecipient---------
@@ -163,4 +159,36 @@ create or replace trigger sendMessageToUser
     END IF;
 	end;
 /
+
+/*
+1. If new mesagges sent to a group:
+    1.1 Get all userIDs in groupmembership where groupID = groupID to which the messages was sent
+    1.2 Add all userIDs with :new.megID to messageRecipient (Duplicating the msg for each user is not necessary) 
+
+SQL for testing: 
+	--------------Create memberships---------------------
+	insert into groupmembership values ('1', '1', 'user');
+	insert into groupmembership values ('1', '2', 'user');
+	insert into groupmembership values ('1', '3', 'user');
+	
+	--------------Insert and check if was created---------
+	INSERT INTO messages (msgID,fromID,message,toGroupID,toUserID,dateSent) VALUES ('333',43,'This is message to group 1','1',NULL,'06-Aug-18');
+	select * from messageRecipient where msgID='333';
+
+*/
+create or replace trigger sendMessagetoGroup
+    after insert on messages 
+    for each row
+    begin 
+        IF :new.toGroupID IS NOT NULL 
+        THEN
+            insert into messageRecipient (msgID, userID)
+            SELECT :new.msgID, g.userID
+            FROM groupMembership g
+            WHERE g.gID = :new.toGroupID; -- you forgot : here
+        end if;
+    end;
+/
+
+
 -------------****EndTriggers***-----------------
