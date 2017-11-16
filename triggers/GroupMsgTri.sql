@@ -12,7 +12,7 @@ create or replace trigger sendMessagetoGroup
 		FROM groupMembership as g
 		WHERE g.groupID = new.GroupID;
 		
-		insert into messageRecipient values(:new.msgID, :new.toUserID);
+		insert into messageRecipient values(:new.msgID, userID);
 	end if;
 end;
 /
