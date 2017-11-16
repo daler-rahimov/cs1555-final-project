@@ -114,6 +114,58 @@ INSERT INTO groups (gID,name,description) VALUES (8,'Vestibulum Company','eleife
 INSERT INTO groups (gID,name,description) VALUES (9,'Pretium Institute','leo, in lobortis tellus justo sit amet nulla. Donec non justo. Proin non massa non ante bibendum ullamcorper.');
 INSERT INTO groups (gID,name,description) VALUES (10,'Ut Company','dictum cursus. Nunc mauris elit,');
 
+---------- 50 groupmembers, 5 members per group ----------------
+INSERT INTO groupMembership (gID, userID, role) VALUES (1, 29, 'manager');
+INSERT INTO groupMembership (gID, userID, role) VALUES (1, 13, 'user');
+INSERT INTO groupMembership (gID, userID) VALUES (1, 98);
+INSERT INTO groupMembership (gID, userID, role) VALUES (1, 67, 'user');
+INSERT INTO groupMembership (gID, userID, role) VALUES (1, 83, 'user');
+INSERT INTO groupMembership (gID, userID, role) VALUES (2, 88, 'manager');
+INSERT INTO groupMembership (gID, userID, role) VALUES (2, 34, 'user');
+INSERT INTO groupMembership (gID, userID, role) VALUES (2, 54, 'user');
+INSERT INTO groupMembership (gID, userID) VALUES (2, 33);
+INSERT INTO groupMembership (gID, userID, role) VALUES (2, 53, 'user');
+INSERT INTO groupMembership (gID, userID, role) VALUES (3, 19, 'manager');
+INSERT INTO groupMembership (gID, userID, role) VALUES (3, 77, 'user');
+INSERT INTO groupMembership (gID, userID, role) VALUES (3, 38, 'user');
+INSERT INTO groupMembership (gID, userID, role) VALUES (3, 67, 'user');
+INSERT INTO groupMembership (gID, userID) VALUES (3, 52);
+INSERT INTO groupMembership (gID, userID, role) VALUES (4, 100, 'manager');
+INSERT INTO groupMembership (gID, userID, role) VALUES (4, 30, 'user');
+INSERT INTO groupMembership (gID, userID, role) VALUES (4, 12, 'user');
+INSERT INTO groupMembership (gID, userID, role) VALUES (4, 44, 'user');
+INSERT INTO groupMembership (gID, userID) VALUES (4, 29);
+INSERT INTO groupMembership (gID, userID, role) VALUES (5, 66, 'manager');
+INSERT INTO groupMembership (gID, userID, role) VALUES (5, 7, 'user');
+INSERT INTO groupMembership (gID, userID, role) VALUES (5, 82, 'user');
+INSERT INTO groupMembership (gID, userID, role) VALUES (5, 11, 'user');
+INSERT INTO groupMembership (gID, userID, role) VALUES (5, 49, 'user');
+INSERT INTO groupMembership (gID, userID, role) VALUES (6, 78, 'manager');
+INSERT INTO groupMembership (gID, userID, role) VALUES (6, 11, 'user');
+INSERT INTO groupMembership (gID, userID, role) VALUES (6, 73, 'user');
+INSERT INTO groupMembership (gID, userID, role) VALUES (6, 83, 'user');
+INSERT INTO groupMembership (gID, userID) VALUES (6, 23);
+INSERT INTO groupMembership (gID, userID, role) VALUES (7, 82, 'manager');
+INSERT INTO groupMembership (gID, userID, role) VALUES (7, 38, 'user');
+INSERT INTO groupMembership (gID, userID, role) VALUES (7, 92, 'user');
+INSERT INTO groupMembership (gID, userID, role) VALUES (7, 38, 'user');
+INSERT INTO groupMembership (gID, userID) VALUES (7, 29);
+INSERT INTO groupMembership (gID, userID, role) VALUES (8, 60, 'manager');
+INSERT INTO groupMembership (gID, userID, role) VALUES (8, 38, 'manager');
+INSERT INTO groupMembership (gID, userID, role) VALUES (8, 73, 'manager');
+INSERT INTO groupMembership (gID, userID, role) VALUES (8, 39, 'user');
+INSERT INTO groupMembership (gID, userID, role) VALUES (8, 41, 'user');
+INSERT INTO groupMembership (gID, userID, role) VALUES (9, 88, 'manager');
+INSERT INTO groupMembership (gID, userID, role) VALUES (9, 23, 'user');
+INSERT INTO groupMembership (gID, userID, role) VALUES (9, 66, 'manager');
+INSERT INTO groupMembership (gID, userID, role) VALUES (9, 98, 'user');
+INSERT INTO groupMembership (gID, userID, role) VALUES (9, 56, 'user');
+INSERT INTO groupMembership (gID, userID, role) VALUES (10, 99, 'manager');
+INSERT INTO groupMembership (gID, userID, role) VALUES (10, 25, 'user');
+INSERT INTO groupMembership (gID, userID, role) VALUES (10, 82, 'user');
+INSERT INTO groupMembership (gID, userID, role) VALUES (10, 72, 'user');
+INSERT INTO groupMembership (gID, userID) VALUES (10, 17, 'user');
+
 --------------------200 Frieds -----------------------------------
 INSERT INTO friends (userID1,userID2,JDate) VALUES (43,44,'22-Jun-17');
 INSERT INTO friends (userID1,userID2,JDate) VALUES (25,31,'16-Nov-16');
