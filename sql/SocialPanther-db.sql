@@ -51,7 +51,7 @@ drop table pendingGroupmembers cascade constraints;
 CREATE TABLE pendingGroupmembers(
 	gID	varchar2(20),
 	userID	varchar2(20),
-	message	varchar2(20),
+	message	varchar2(200),
 	constraint pendingG_pk primary key (gID, userID)
 		deferrable initially immediate,
 	constraint pendingG1_fk foreign key (gID) references groups (gID)
