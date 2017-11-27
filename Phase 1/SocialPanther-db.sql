@@ -2,11 +2,13 @@ drop table profile cascade constraints;
 CREATE TABLE PROFILE(
 	userID	varchar2(20),
 	name	varchar2(20) NOT NULL,
+	email	varchar2(20) NOT NULL,
 	password	varchar2(20) NOT NULL,
 	date_of_birth	date,
 	lastLogin	timestamp,
 	constraint profile_pk primary key (userID)
 		deferrable initially immediate
+	--make email unique??
 );
 
 ---------groups ----------
