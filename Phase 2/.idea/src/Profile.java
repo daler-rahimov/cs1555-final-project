@@ -2,40 +2,46 @@ import java.sql.*;
 import java.text.ParseException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class Profile {
-    private static Connection connection; //used to hold the jdbc connection to the DB
-    private Statement statement; //used to create an instance of the connection
-    private PreparedStatement prepStatement; //used to create a prepared statement, that will be later reused
-    private ResultSet resultSet; //used to hold the result of your query (if one exists)
-    private String query;  //this will hold the query we are using
     private static final DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
     /**
      * Given a name, email address, and date of birth, add a new user to the system by inserting as
      new entry in the profile relation
      */
-    public void createUser(String name, String email, String birthdate, String password){
+    public static void createUser(String name, String email, String birthdate, String password){
         //requirements for creating a profile
         //userID will be created by finding the next available number for the ID
         //last login will be added at this time
 
-        int userID;
-        //need to create query to get next available ID
-
         try {
-            connection.setAutoCommit(false); //the default is true and every statement executed is considered a transaction.
-            connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
-            statement = connection.createStatement();
+            ////// 1. Connect to database
+            SocialPantherCon sCon = new SocialPantherCon();
+            Connection con = sCon.getConnection();
 
-            query = "insert into profile" +
-                    "(userid, name, password, date_of_birth, lastlogin)" +  "values"
+            ///// 2. Find next available userI
+            int userID;
+            String idQuery = "";
+
+            Statement stmt = con.createStatement();
+            PreparedStatement preparedStatement = con.prepareStatement(idQuery);
+            ResultSet rs = preparedStatement.executeQuery();
+
+
+
+            ///// 3. Insert into database
+
+            String insertQuery = "INSERT INTO PROFILE" +
+                    "(userid, name, password, date_of_birth, lastlogin)" +  "VALUES"
                     + "('" + userID + "', '" + name + "', '" + email + "', to_date('" + birthdate +
                     ", 'DD-MON-YY'), to_timestamp('" + getCurrentTimeStamp() + "', 'yyyy/mm/dd hh24:mi:ss'))";
 
         }
-
-
+        catch (SQLException Ex) {
+            System.out.println("Message >> Error: " + Ex.toString());
+        }
     };
 
     /**
@@ -46,7 +52,7 @@ public class Profile {
      should be paid handling integrity constraints.
 
      */
-    public void dropUser(){
+    public static void dropUser(){
 
     };
 
@@ -54,7 +60,7 @@ public class Profile {
      * Given two users (A and B), find a path, if one exists, between A and B with at most 3 hop
      between them. A hop is defined as a friendship between any two users
      */
-    public void threeDegrees(){
+    public static void threeDegrees(){
 
     };
 
@@ -64,7 +70,7 @@ public class Profile {
      abc”, the results should be the set of all profiles that match “xyz” union the set of all profiles
      that matches “abc”
      */
-    public void searchForUser(){
+    public static void searchForUser(){
 
     };
 
@@ -72,7 +78,7 @@ public class Profile {
      * Given userID and password, login as the user in the system when an appropriate match is
      found.
      */
-    public void login(){
+    public static void login(){
 
     };
 
@@ -80,7 +86,7 @@ public class Profile {
      * This option should cleanly shut down and exit the program after marking the time of the user’s
      logout in the profile relation,
      */
-    public void logout(){
+    public static void logout(){
 
     };
 
