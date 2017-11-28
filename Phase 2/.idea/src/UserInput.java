@@ -12,13 +12,13 @@ import java.util.Scanner;
  */
 public class UserInput {
 
-    public static String getUserID() {
+    public static String getID() {
         String userID;
         Scanner scanner = new Scanner(System.in);
         int size;
         String input;
         do {
-            System.out.print("Enter user id (<20 chars) >");
+            System.out.print("Enter id (<20 chars) >");
             input = scanner.next();
             size = input.length();
         } while (size > 20);
@@ -32,7 +32,7 @@ public class UserInput {
         String input;
         
         do {
-            System.out.print("Enter you message (<200 chars) >");
+            System.out.print("Enter you message (<200 chars, \n for new line) >");
             input = scanner.nextLine();
             size = input.length();
         } while (size > 200 || size == 0);

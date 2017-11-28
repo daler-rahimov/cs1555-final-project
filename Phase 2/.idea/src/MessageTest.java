@@ -10,6 +10,7 @@
  */
 public class MessageTest {
     public static void main(String args[]){
-        Message.sentMessageToUser("1");
+//        Message.sentMessageToUser("1");
+        Message.sendMessageToGroup("83");
     }
 }
