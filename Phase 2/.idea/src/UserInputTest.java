@@ -10,7 +10,7 @@
  */
 public class UserInputTest {
     public static void main(String args[]){
-        int userID = UserInput.getID();
+        String userID = UserInput.getID();
         System.out.println("UserInputTest > userID=" + userID);
         String msg = UserInput.getMessage();
         System.out.println(msg);

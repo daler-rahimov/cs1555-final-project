@@ -41,16 +41,16 @@ public class SocialPantherCon {
     public SocialPantherCon() throws SQLException {
         if (!(connection instanceof Connection)) {
             String username, password;
-            username = "daler"; //This is your username in oracle
-            password = "password"; //This is your password in oracle
+            username = "mel118"; //This is your username in oracle
+            password = "psswrd!"; //This is your password in oracle
             try {
                 // Register the oracle driver.  
                 DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
-//                String url = "jdbc:oracle:thin:@class3.cs.pitt.edu:1521:dbclass";
-                String url = "jdbc:oracle:thin:@127.0.0.1:1521:xe";
+		String url = "jdbc:oracle:thin:@class3.cs.pitt.edu:1521:dbclass";
+               // String url = "jdbc:oracle:thin:@127.0.0.1:1521:xe";
                 
                 connection = DriverManager.getConnection(url, username, password);
-            } catch (NumberFormatException | SQLException Ex) {
+            } catch (SQLException Ex) {
                 System.out.println("SocialPantherCcon >> Error connecting to database.  Machine Error: "
                         + Ex.toString());
             }
