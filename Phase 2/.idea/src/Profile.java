@@ -24,7 +24,7 @@ public class Profile {
             SocialPantherCon sCon = new SocialPantherCon();
             Connection con = sCon.getConnection();
 
-            ///// 2. Find next available userI
+            ///// 2. Find next available userID
             String selectSQL = "select max(to_number(regexp_substr(userid, '\\d+')))+1 userid from PROFILE"; // notice that "//" is escape and in sqlplues its "/"
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(selectSQL);
@@ -39,7 +39,10 @@ public class Profile {
             // create a profile instance Profile(String userID, String name, String password, java.sql.Date dateOfBirth, Timestamp lastlogin, String email)
             Profile p = new Profile(Integer.toString(nextUserID), name, password, birthdate, new Timestamp(new java.util.Date().getTime()), email);
             p.insertToDb(con);
-            
+
+            con.close();
+            stmt.close();
+            rs.close();
             
 //            int userID;
 //            String idQuery = "";
@@ -68,8 +71,24 @@ public class Profile {
      * Attention should be paid handling integrity constraints.
      *
      */
-    public static void dropUser() {
+    public static void dropUser(String userID) {
+        try {
+            ///// 1. Connect to database
+            SocialPantherCon sCon = new SocialPantherCon();
+            Connection con = sCon.getConnection();
 
+            ///// 2. Activate trigger by deleting profile
+            String delete = "DELETE FROM profile WHERE userid = ?";
+            PreparedStatement prep = con.prepareStatement(delete);
+            prep.setString(1, userID);
+            prep.executeUpdate();
+
+            con.close();
+            prep.close();
+
+        } catch (SQLException Ex) {
+            System.out.println("Message >> Error: " + Ex.toString());
+        }
     }
 
     /**
@@ -77,8 +96,21 @@ public class Profile {
      * with at most 3 hop between them. A hop is defined as a friendship between
      * any two users
      */
-    public static void threeDegrees() {
+    public static void threeDegrees(String userID1, String userID2) {
+        try{
+            ///// 1. Connect to database
+            SocialPantherCon sCon = new SocialPantherCon();
+            Connection con = sCon.getConnection();
 
+            ///// 2. Look through userID1 friends list (hop 1) for userID2
+
+            ///// 3. Go through all of userID1 friends' friends list (hop 2) for userID2
+
+            ///// 4. Go through all of userID1 friends friends friend list (hop 3) for userID2
+
+        } catch (SQLException Ex) {
+            System.out.println("Message >> Error: " + Ex.toString());
+        }
     }
 
     /**
@@ -89,15 +121,44 @@ public class Profile {
      * matches “abc”
      */
     public static void searchForUser() {
+        try{
+            ///// 1. Connect to database
+            SocialPantherCon sCon = new SocialPantherCon();
+            Connection con = sCon.getConnection();
 
+            ///// 2. Figure out if user is searching by userID, name, birthdate, or email
+
+            ///// 3. Perform search based on which field the person is searching by
+
+        } catch (SQLException Ex) {
+            System.out.println("Message >> Error: " + Ex.toString());
+        }
     }
 
     /**
      * Given userID and password, login as the user in the system when an
      * appropriate match is found.
      */
-    public static void login() {
+    public static Boolean login() {
+        Boolean loggedIn = false;
+        try{
+            ///// 1. Connect to database
+            SocialPantherCon sCon = new SocialPantherCon();
+            Connection con = sCon.getConnection();
 
+            ///// 2. Search for a match to userID and password
+            String selectSQL = "SELECT userID\n"
+                    + "FROM PROFILE\n"
+                    + "WHERE userID = ? AND password = ?";
+            PreparedStatement prep = con.prepareStatement(())
+
+            ///// 3. Change status (??) to logged in
+
+        } catch (SQLException Ex) {
+            System.out.println("Message >> Error: " + Ex.toString());
+        }
+
+        return loggedIn;
     }
 
     /**
@@ -105,7 +166,18 @@ public class Profile {
      * the time of the user’s logout in the profile relation,
      */
     public static void logout() {
+        try{
+            ///// 1. Connect to database
+            SocialPantherCon sCon = new SocialPantherCon();
+            Connection con = sCon.getConnection();
 
+            ///// 2. Add current time to last logged in time
+
+            ///// 3. Close connections to db, return to main menu
+
+        } catch (SQLException Ex) {
+            System.out.println("Message >> Error: " + Ex.toString());
+        }
     }
 
     private static String getCurrentTimeStamp() {
