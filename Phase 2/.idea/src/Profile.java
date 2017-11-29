@@ -139,8 +139,7 @@ public class Profile {
      * Given userID and password, login as the user in the system when an
      * appropriate match is found.
      */
-    public static Boolean login() {
-        Boolean loggedIn = false;
+    public static Boolean login(String userID, String password) {
         try{
             ///// 1. Connect to database
             SocialPantherCon sCon = new SocialPantherCon();
@@ -150,15 +149,21 @@ public class Profile {
             String selectSQL = "SELECT userID\n"
                     + "FROM PROFILE\n"
                     + "WHERE userID = ? AND password = ?";
-            PreparedStatement prep = con.prepareStatement(())
+            PreparedStatement prep = con.prepareStatement(selectSQL);
+            prep.setString(1, userID);
+            prep.setString(2, password);
+            ResultSet rs = prep.executeQuery();
 
-            ///// 3. Change status (??) to logged in
-
+            ///// 3. Check to make sure that the user is returned and login if they are a user
+            while(rs.next()){
+                if(rs.getString(1).equals(userID))
+                    return true;
+            }
         } catch (SQLException Ex) {
             System.out.println("Message >> Error: " + Ex.toString());
         }
 
-        return loggedIn;
+        return false;
     }
 
     /**
