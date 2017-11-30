@@ -6,6 +6,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+
 public class Profile {
 
     public static final DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");// use java.sql classes instead 
@@ -96,21 +97,111 @@ public class Profile {
      * with at most 3 hop between them. A hop is defined as a friendship between
      * any two users
      */
-    public static void threeDegrees(String userID1, String userID2) {
+    public static Set<String> threeDegrees(String userID1, String userID2) {
         try{
             ///// 1. Connect to database
             SocialPantherCon sCon = new SocialPantherCon();
             Connection con = sCon.getConnection();
+            Set<String> threeDegreesPath = new HashSet<String>();
+            Set<String> alreadyChecked = new HashSet<String>();
+            threeDegreesPath.add(userID1);
+            Boolean pathFound = false;
 
             ///// 2. Look through userID1 friends list (hop 1) for userID2
+            String selectSQL = "SELECT userID\n"
+                    + "FROM friends\n"
+                    + "WHERE userID1 = ? OR userID2 = ?";
+            PreparedStatement prep = con.prepareStatement(selectSQL);
+            prep.setString(1, userID1);
+            prep.setString(1, userID1);
+            ResultSet firstHop = prep.executeQuery(selectSQL);
+
+
+
+            while(firstHop.next()){
+                if(firstHop.getString(1).equals(userID2)) {
+                    threeDegreesPath.add(userID2);
+                    return threeDegreesPath;
+                }
+            }
+
+            alreadyChecked.add(userID1);
 
             ///// 3. Go through all of userID1 friends' friends list (hop 2) for userID2
+            //return cursor back to first pointer
+            firstHop.first();
+            Set<String> secondSet = new HashSet<String>();
+
+
+            while(firstHop.next()) {
+                String userID3 = firstHop.getString(1);
+                selectSQL = "SELECT userID\n"
+                        + "FROM friends\n"
+                        + "WHERE userID1 = ? OR userID2 = ?";
+                prep = con.prepareStatement(selectSQL);
+                prep.setString(1, userID3);
+                prep.setString(1, userID3);
+                ResultSet secondHop = prep.executeQuery(selectSQL);
+
+                while (secondHop.next()) {
+                    if (!alreadyChecked.contains(firstHop.getString(1))) {
+                        if (firstHop.getString(1).equals(userID2)) {
+                            threeDegreesPath.add(userID3);
+                            threeDegreesPath.add(userID2);
+                            return threeDegreesPath;
+                        }
+                        else{
+                            secondSet.add(secondHop.getString(1));
+                        }
+                    }
+                }
+
+                alreadyChecked.add(userID3);
+                secondHop.close();
+            }
 
             ///// 4. Go through all of userID1 friends friends friend list (hop 3) for userID2
+
+            //need to add a way to figure out which intermediate friend got us here..., maybe use a HashMap<String, Set>
+            Iterator<String> it = secondSet.iterator();
+            while(it.hasNext()){
+                String userID3 = it.next();
+                selectSQL = "SELECT userID\n"
+                        + "FROM friends\n"
+                        + "WHERE userID1 = ? OR userID2 = ?";
+                prep = con.prepareStatement(selectSQL);
+                prep.setString(1, userID3);
+                prep.setString(1, userID3);
+                ResultSet thirdHop = prep.executeQuery(selectSQL);
+
+                while (thirdHop.next()) {
+                    if (!alreadyChecked.contains(firstHop.getString(1))) {
+                        if (firstHop.getString(1).equals(userID2)) {
+                            threeDegreesPath.add(userID3);
+                            threeDegreesPath.add(userID2);
+                            return threeDegreesPath;
+                        }
+                        else{
+                            secondSet.add(thirdHop.getString(1));
+                        }
+                    }
+                }
+
+                alreadyChecked.add(userID3);
+                thirdHop.close();
+            }
+
+            con.close();
+            prep.close();
+            firstHop.close();
+
+            ///// 5. If no path, return null
+            return null;
 
         } catch (SQLException Ex) {
             System.out.println("Message >> Error: " + Ex.toString());
         }
+        return null;
     }
 
     /**
@@ -120,15 +211,16 @@ public class Profile {
      * of all profiles that match “xyz” union the set of all profiles that
      * matches “abc”
      */
-    public static void searchForUser() {
+    public static void searchForUser(String search) {
         try{
             ///// 1. Connect to database
             SocialPantherCon sCon = new SocialPantherCon();
             Connection con = sCon.getConnection();
 
-            ///// 2. Figure out if user is searching by userID, name, birthdate, or email
+            ///// 2. parse string for each keyword added to search
 
-            ///// 3. Perform search based on which field the person is searching by
+
+            ///// 3. Perform search in userID, name, email, dateofbirth for each keyword
 
         } catch (SQLException Ex) {
             System.out.println("Message >> Error: " + Ex.toString());
@@ -140,6 +232,7 @@ public class Profile {
      * appropriate match is found.
      */
     public static Boolean login(String userID, String password) {
+        Boolean loggedIn = false;
         try{
             ///// 1. Connect to database
             SocialPantherCon sCon = new SocialPantherCon();
@@ -155,42 +248,61 @@ public class Profile {
             ResultSet rs = prep.executeQuery();
 
             ///// 3. Check to make sure that the user is returned and login if they are a user
-            while(rs.next()){
+            if(rs.next()){
                 if(rs.getString(1).equals(userID))
-                    return true;
+                    loggedIn = true;
             }
+            else {
+                System.err.print("User login or password is incorrect");
+                exit(1);
+            }
+
+            con.close();
+            prep.close();
+            rs.close();
         } catch (SQLException Ex) {
             System.out.println("Message >> Error: " + Ex.toString());
         }
 
-        return false;
+        return loggedIn;
     }
 
     /**
      * This option should cleanly shut down and exit the program after marking
      * the time of the user’s logout in the profile relation,
      */
-    public static void logout() {
+    public static void logout(String userID) {
         try{
             ///// 1. Connect to database
             SocialPantherCon sCon = new SocialPantherCon();
             Connection con = sCon.getConnection();
 
             ///// 2. Add current time to last logged in time
+            String update = "UPDATE profile"
+                    + "Set lastLogin = " + new Timestamp(new java.util.Date().getTime())
+                    + "WHERE userid = ?";
+            PreparedStatement prep = con.prepareStatement(update);
+            prep.setString(1, userID);
+            prep.executeUpdate(update);
+
 
             ///// 3. Close connections to db, return to main menu
+            //Should I pass something back to let the program know they have logged out?
+
+            con.close();
+            prep.close();
 
         } catch (SQLException Ex) {
             System.out.println("Message >> Error: " + Ex.toString());
         }
     }
 
-    private static String getCurrentTimeStamp() {
+    /*private static String getCurrentTimeStamp() {
 
         java.util.Date today = new java.util.Date();
         return dateFormat.format(today.getTime());
 
-    }
+    }*/
 
     private String userID;
     private String name;
