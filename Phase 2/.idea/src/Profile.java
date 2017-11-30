@@ -198,6 +198,10 @@ public class Profile {
             ///// 5. If no path, return null
             return null;
 
+
+            ///// Better idea might be to apply Dijkstra's with each hop/friendship a weight of 1
+
+
         } catch (SQLException Ex) {
             System.out.println("Message >> Error: " + Ex.toString());
         }
@@ -317,7 +321,8 @@ public class Profile {
      */
     public int insertToDb(Connection con) {
         //INSERT INTO profile (userid,name,password,date_of_birth,lastlogin) VALUES ('8','Brynne','WRG10AGK0MZ','05-Sep-96','30-Nov-17');
-        String insertSQL = "INSERT INTO profile (userid,name,password,date_of_birth,lastlogin) "
+        String insertSQL = "INSER" +
+                "T INTO profile (userid,name,password,date_of_birth,lastlogin) "
                 + "VALUES ("
                 + " ?"
                 + ",?"
