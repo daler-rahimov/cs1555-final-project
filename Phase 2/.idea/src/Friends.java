@@ -1,5 +1,4 @@
 public class Friends {
-    //Any globals up here
 
     /**
      * Create a pending friendship from the (logged in) user to another user based on userID. The
@@ -11,7 +10,14 @@ public class Friends {
      * @param userID1
      * @param userID2
      */
-    public void initiateFriendship(int userID1, int userID2){
+    public void initiateFriendship(String userID1, String userID2, String message){
+        ///// 1. Connect to database
+
+
+        ///// 2. Check to make sure not friends
+
+
+        ///// 3. If not already friends, insert into pendingFriendships
 
     };
 
@@ -39,6 +45,7 @@ public class Friends {
      *
      */
     public void displayFriends(int userID1){
+
 
     };
 }
