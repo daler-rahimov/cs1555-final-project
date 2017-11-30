@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -196,8 +198,7 @@ public class Message {
             String msgStr = UserInput.getMessage();
 //            System.out.println("msgStr = " + msgStr);
             ////////////////////////////////////////////////////////////////////
-            
-            
+
             /////////////// 4. Send the message to the group///////////////
             ////////////////////////////////////////////////////////////////////
             // get max values of msgID. Assuption id is alway numeric 
@@ -221,6 +222,173 @@ public class Message {
             rs.close();
         } catch (SQLException Ex) {
             System.out.println("Message>sendMessageToGroup >> Error: "
+                    + Ex.toString());
+        }
+    }
+
+    /**
+     * 10. displayMessages When the user selects this option, the entire
+     * contents of every message sent to the user should be displayed in a
+     * nicely formatted way.
+     *
+     * @param userID current user that is logged in
+     */
+    public static void displayMessages(String userID) {
+        //1. Get all messages for a given user
+        //2. Display all those messages 
+        try {
+            SocialPantherCon sCon = new SocialPantherCon();
+            Connection con = sCon.getConnection();
+            List<Message> allMessages = new LinkedList<Message>();
+
+            String selectSQL = "SELECT M.MSGID, M.FROMID, M.MESSAGE, M.TOGROUPID, M.TOUSERID,M.DATESENT\n"
+                    + "FROM MESSAGES M \n"
+                    + "INNER JOIN MESSAGERECIPIENT MR ON MR.MSGID=M.MSGID\n"
+                    + "WHERE MR.USERID=?";
+            Statement stmt = con.createStatement();
+            PreparedStatement preparedStatement = con.prepareStatement(selectSQL);
+            preparedStatement.setString(1, userID);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            while (rs.next()) {
+                //public Message(String msgID, String fromID, String message, String toUserID, String toGroupID, Date dateSent) {
+                allMessages.add(new Message(rs.getString("msgID"), rs.getString("fromID"), rs.getString("message"), rs.getString("toUserID"), rs.getString("toGroupID"), rs.getDate("dateSent")));
+            }
+            System.out.println("Lits of all messages sent to you:");
+            System.out.println("--------------------------------");
+            System.out.format("%-8s%-8s%-14s%-200s\n", "msgID", "fromID", "DateSent", "message");
+            for (int i = 0; i < allMessages.size(); i++) {
+                System.out.format("%-8s%-8s%-14s%-200s\n", allMessages.get(i).getMsgID(), allMessages.get(i).getFromID(), allMessages.get(i).getDateSent(), allMessages.get(i).getMessage());
+            }
+            System.out.println("--------------------------------");
+        } catch (SQLException Ex) {
+            System.out.println("Message>displayMessages()  >> Error: "
+                    + Ex.toString());
+        }
+    }
+
+    /**
+     * 11. displayNewMessages This should display messages in the same fashion
+     * as the previous task except that only those messages sent since the last
+     * time the user logged into the system should be displayed.
+     *
+     * @param userID current user logged in
+     */
+    public static void displayNewMessages(String userID) {
+
+        // 2. Get all the messages from lastLoggedIn onword 
+        // 3. Display it 
+        try {
+            SocialPantherCon sCon = new SocialPantherCon();
+            Connection con = sCon.getConnection();
+            List<Message> allMessages = new LinkedList<Message>();
+            Timestamp lastLogin = null;
+
+            String selectSQL = "SELECT M.MSGID, M.FROMID, M.MESSAGE, M.TOGROUPID, M.TOUSERID,M.DATESENT, P.LASTLOGIN\n"
+                    + "FROM MESSAGES M \n"
+                    + "INNER JOIN MESSAGERECIPIENT MR ON MR.MSGID=M.MSGID\n"
+                    + "INNER JOIN PROFILE P ON MR.USERID = P.USERID\n"
+                    + "WHERE MR.USERID=? AND \n"
+                    + "        TO_DATE (TO_CHAR (P.LASTLOGIN, 'YYYY-MON-DD HH24:MI:SS'),'YYYY-MON-DD HH24:MI:SS')<= M.DATESENT";// 1. DATESENT is after last logged in 
+
+            Statement stmt = con.createStatement();
+            PreparedStatement preparedStatement = con.prepareStatement(selectSQL);
+            preparedStatement.setString(1, userID);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            while (rs.next()) {
+                //public Message(String msgID, String fromID, String message, String toUserID, String toGroupID, Date dateSent) {
+                allMessages.add(new Message(rs.getString("msgID"), rs.getString("fromID"), rs.getString("message"), rs.getString("toUserID"), rs.getString("toGroupID"), rs.getDate("dateSent")));
+                lastLogin = rs.getTimestamp("lastlogin");
+            }
+            System.out.print("Lits of all messages since you last logged in: ");
+            if (lastLogin instanceof Timestamp) {
+                System.out.print(lastLogin + "\n");
+            }
+            System.out.println("-----------------------------------------------------------------");
+            System.out.format("%-8s%-8s%-14s%-200s\n", "msgID", "fromID", "DateSent", "message");
+            System.out.println("-----------------------------------------------------------------");
+
+            for (int i = 0; i < allMessages.size(); i++) {
+                System.out.format("%-8s%-8s%-14s%-200s\n", allMessages.get(i).getMsgID(), allMessages.get(i).getFromID(), allMessages.get(i).getDateSent(), allMessages.get(i).getMessage());
+            }
+            System.out.println("-----------------------------------------------------------------");
+        } catch (SQLException Ex) {
+            System.out.println("Message>displayMessages()  >> Error: "
+                    + Ex.toString());
+        }
+    }
+
+    /**
+     * 14. topMessages Display top K who have sent to received the highest
+     * number of messages during for the past x months. x and K are input
+     * parameters to this function.
+     */
+    public static void topMessages() {
+
+        // 3. count number of sent + received messages for each user for past X months 
+        // 4. get top K of those users and display them 
+        // 1. get top K 
+        int topK = UserInput.getInt("Enter Top K values >");
+        // 2. get past X months
+        int pastXMonths = UserInput.getInt("Enter past X months >");
+
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MONTH, -(pastXMonths));
+        java.util.Date curreSubDate = cal.getTime();
+        java.sql.Date afterThiDate = new java.sql.Date(curreSubDate.getTime());
+        System.out.println(curreSubDate);
+        System.out.println(afterThiDate);
+
+        try {
+            SocialPantherCon sCon = new SocialPantherCon();
+            Connection con = sCon.getConnection();
+
+            // for past Date  Top K 
+            String selectSQL = "select * from \n"
+                    + "(\n"
+                    + "  select sCount.userID, sCount.name , sCount.countSent+rCount.countReceived as RScount\n"
+                    + "  from\n"
+                    + "  (\n"
+                    + "    select p.userID, count(mr.MSGID) as countReceived \n"
+                    + "    from MESSAGERECIPIENT mr \n"
+                    + "    inner join profile p on mr.USERID = p.USERID\n"
+                    + "    inner join messages m on mr.MSGID = m.MSGID\n"
+                    + "    where m.DATESENT>?\n"
+                    + "    group by p.USERID\n"
+                    + "  ) rCount\n"
+                    + "  INNER JOIN \n"
+                    + "  (\n"
+                    + "    select p.userID, p.name, count(m.MSGID) as countSent \n"
+                    + "    from messages m \n"
+                    + "    inner join profile p on m.fromID = p.USERID\n"
+                    + "    where m.dateSent>?\n"
+                    + "    group by p.USERID , p.name\n"
+                    + "  ) sCount\n"
+                    + "  ON rCount.userID = sCount.userID\n"
+                    + "  ORDER BY sCount.countSent+rCount.countReceived DESC\n"
+                    + "  ) t1\n"
+                    + "WHERE ROWNUM <= ?\n"
+                    + "ORDER BY ROWNUM";// 1. DATESENT is after last logged in 
+
+            Statement stmt = con.createStatement();
+            PreparedStatement preparedStatement = con.prepareStatement(selectSQL);
+            preparedStatement.setDate(1, afterThiDate);
+            preparedStatement.setDate(2, afterThiDate);
+//            preparedStatement.setDate(2, new Date(118, 1, 17));
+            preparedStatement.setInt(3, topK);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            System.out.println("-------------------------------------------");
+            System.out.format("%-8s%-20s%-10s\n", "userID", "name", "RSCount");
+            System.out.println("-------------------------------------------");
+            while (rs.next()) {
+                System.out.format("%-8s%-20s%-10s\n", rs.getString("userID"), rs.getString("name"), rs.getInt("RScount"));
+            }
+
+            System.out.println("-------------------------------------------");
+        } catch (SQLException Ex) {
+            System.out.println("Message>topMessages()  >> Error: "
                     + Ex.toString());
         }
     }

@@ -12,6 +12,21 @@ import java.util.Scanner;
  */
 public class UserInput {
 
+    /**
+     * Get a validate int. Keep prompting till int enteredd 
+     * @param message message that need to be displayed  while prompting 
+     * @return 
+     */
+    public static int getInt(String message) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print(message);
+        while (!scanner.hasNextInt()) {
+            scanner.nextLine();
+            System.out.print(message);
+        }
+        return scanner.nextInt();
+    }
+
     public static String getID() {
         String userID;
         Scanner scanner = new Scanner(System.in);
@@ -30,7 +45,7 @@ public class UserInput {
         Scanner scanner = new Scanner(System.in);
         int size;
         String input;
-        
+
         do {
             System.out.print("Enter you message (<200 chars, \n for new line) >");
             input = scanner.nextLine();

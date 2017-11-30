@@ -9,8 +9,14 @@
  * @author Daler
  */
 public class MessageTest {
-    public static void main(String args[]){
+
+    public static void main(String args[]) {
 //        Message.sentMessageToUser("1");
-        Message.sendMessageToGroup("83");
+//        Message.sendMessageToGroup("83");
+//        Message.displayMessages("83");
+//        Message.displayNewMessages("1");
+        Message.topMessages();        
+
+
     }
 }
