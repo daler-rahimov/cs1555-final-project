@@ -1,3 +1,6 @@
+import java.sql.*;
+import java.util.*;
+
 public class Friends {
 
     /**
@@ -10,15 +13,50 @@ public class Friends {
      * @param userID1
      * @param userID2
      */
-    public void initiateFriendship(String userID1, String userID2, String message){
-        ///// 1. Connect to database
+    public static Boolean initiateFriendship(String userID1, String userID2, String message){
+        try {
+            ///// 1. Connect to database
+            SocialPantherCon sCon = new SocialPantherCon();
+            Connection con = sCon.getConnection();
 
+            ///// 2. Check to make sure not friends by getting all of userID1's friends then looping through
+            /////       to check that userID2 does not exist
+            String selectSQL = "SELECT userID\n"
+                    + "FROM FRIENDS\n"
+                    + "WHERE userID1 = ? OR userID2 = ?";
+            PreparedStatement prep = con.prepareStatement(selectSQL);
+            prep.setString(1, userID1);
+            prep.setString(1, userID1);
+            ResultSet rs = prep.executeQuery();
 
-        ///// 2. Check to make sure not friends
+            while(rs.next()){
+                if(rs.getString(1).equals(userID2))
+                    return false;
+            }
 
+            ///// 3. If not already friends, insert into pendingFriendships
+            String insert = "INSERT INTO pendingFriends(fromID, toID, message)"
+                    + "VALUES ("
+                    + "?, "
+                    + "?, "
+                    + "?)";
+            prep = con.prepareStatement(insert);
+            prep.setString(1, userID1);
+            prep.setString(2, userID2);
+            prep.setString(3, message);
+            prep.executeUpdate();
 
-        ///// 3. If not already friends, insert into pendingFriendships
+            con.close();
+            prep.close();
+            rs.close();
 
+            return true;
+
+        } catch (SQLException Ex) {
+            System.out.println("Friends >> Error: "
+                    + Ex.toString());
+        }
+        return false;
     };
 
     /**
@@ -31,7 +69,35 @@ public class Friends {
      * @param userID1
      * @param userID2
      */
-    public void confirmFriendship(int userID1, int userID2){
+    public void confirmFriendship(int userID1){
+        try{
+            SocialPantherCon sCon = new SocialPantherCon();
+            Connection con = sCon.getConnection();
+
+            ///// 1. Find all friends request (where user is toUser in pending friends
+            /////   List all friends request and display message. Keep a counter for each output
+
+            //// 2. Check if user is manager of group
+            ////    if yes, collect all groupRequests where the user is manager. list all requests and display messages
+            ////    continue from counter
+
+            //// 3. Ask user if they want to confirm all or select confirmations
+
+            //// 4. If confirm all, send all requests to correct tables
+
+            //// 5. If select, have a loop that will ask user to select the the number of confirmations
+            ////    then ask user to select which requests to confirm
+            ////    Potential corner: if user selects more than initially indicated, prompt user if they want to select
+            ////    more than initially indicated? Or just make array whatever size of input??
+            ////    Remove any accepted requests
+            ////    Potentially break this down for
+
+            //// 6. Any requests that were not accepted are now deleted
+
+        } catch (SQLException Ex){
+            System.out.println("Friends >> Error: "
+                + Ex.toString());
+        }
 
     };
 
@@ -44,7 +110,89 @@ public class Friends {
      prompted to either select to retrieve another friend’s profile or return to the main menu.
      *
      */
-    public void displayFriends(int userID1){
+    public void displayFriends(String userID1){
+        try{
+            SocialPantherCon sCon = new SocialPantherCon();
+            Connection con = sCon.getConnection();
+            Set<String> toDisplay = new HashSet<String>();
+
+            ///// 1. List the userIDs of all friends of userID1 and the friends' friends (excluding userID1)
+            ///// Make sure to remove duplicates so add all users to display into a set first
+            String selectSQL = "SELECT userID\n"
+                    + "FROM FRIENDS\n"
+                    + "WHERE userID1 = ? OR userID2 = ?\n";
+            PreparedStatement prep = con.prepareStatement(selectSQL);
+            prep.setString(1, userID1);
+            prep.setString(2, userID1);
+            ResultSet userFriends = prep.executeQuery();
+
+            while(userFriends.next()){
+                toDisplay.add(userFriends.getString(1));
+                selectSQL = "SELECT userID\n"
+                        + "FROM FRIENDS\n"
+                        + "WHERE userID1 = ? OR userID2 = ?\n";
+                prep = con.prepareStatement(selectSQL);
+                prep.setString(1, userID1);
+                prep.setString(2, userID1);
+                ResultSet friendFriends = prep.executeQuery();
+
+                while(friendFriends.next()){
+                    toDisplay.add(friendFriends.getString(1));
+                }
+
+                friendFriends.close();
+            }
+
+            userFriends.close();
+
+            //create iterator to display all the choices
+
+            //// 2. Ask userID1 to input an userID
+            //// if 0, return back
+            //// for anyother userID, retrieve profile information (excluding password)
+            //// prompt user if they want to look at more profiles
+            String message = "Would you like to look up a profile?\n"
+                    + "Options: \n"
+                    + "1: Yes\n"
+                    + "2: No \n";
+            int keepLooking = UserInput.getInt(message);
+
+            while(keepLooking == 1) {
+                String userID2 = UserInput.getID("Please enter the ID of the user you want to look at: ");
+                if(toDisplay.contains(userID2)){
+                    selectSQL = "SELECT userID, name, email, date_of_birth, lastLogin\n"
+                            + "FROM PROFILE\n"
+                            + "WHERE userID = ?";
+                    prep = con.prepareStatement(selectSQL);
+                    prep.setString(1, userID2);
+                    ResultSet rs = prep.executeQuery();
+
+                    rs.next();
+                        System.out.print("UserID: " + userID2
+                                        + "\nName: " + rs.getString(2)
+                                        + "\nEmail: " + rs.getString(3)
+                                        + "\nDate of Birth: " + rs.getDate(4)
+                                        + "\nLast Login: " + rs.getDate(5));
+
+                    message = "Would you like to look up another profile?\n"
+                            + "Options: \n"
+                            + "\t1: Yes\n"
+                            + "\t2: No \n";
+                    keepLooking = UserInput.getInt(message);
+
+                    rs.close();
+                } else{
+                    System.out.println("This user if not accessible.");
+                    keepLooking = UserInput.getInt(message);
+                }
+            }
+
+            prep.close();
+            con.close();
+        } catch (SQLException Ex){
+            System.out.println("Friends >> Error: "
+                    + Ex.toString());
+        }
 
 
     };
