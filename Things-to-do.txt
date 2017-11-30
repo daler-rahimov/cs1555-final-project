@@ -1,0 +1,8 @@
+Things to add/do:
+	1. people can only message groups they are in
+
+	2. friendship duplicates (ie username in backwards)
+	
+	3. Add emails to profile
+	
+	4. Add group limits to groups
