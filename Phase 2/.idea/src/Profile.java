@@ -9,7 +9,7 @@ import java.util.*;
 
 public class Profile {
 
-    public static final DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");// use java.sql classes instead 
+    public static final DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");// use java.sql classes instead
 
     /**
      * Given a name, email address, and date of birth, add a new user to the
@@ -20,10 +20,26 @@ public class Profile {
         //userID will be created by finding the next available number for the ID
         //last login will be added at this time
 
-        String name;
-        String email;
-        java.sql.Date birthdate;
-        String password;
+        System.out.println("Please enter your name: ");
+        String name = UserInput.getID();
+
+        System.out.println("Please enter your email: ");
+        String email = UserInput.getID();
+
+        System.out.println("Please enter your birthday (dd-mm-yyyy): ");
+        String date = UserInput.getID();
+
+        java.util.Date utilDate = null;
+        try{
+            utilDate = new SimpleDateFormat("dd-MM-yyyy").parse(date);
+        } catch(ParseException e){
+            System.out.println("createUser date parsing error: " + e.toString());
+        }
+
+        java.sql.Date birthdate = new java.sql.Date(utilDate.getTime());
+
+        System.out.println("Please enter a password: ");
+        String password = UserInput.getID();
 
         try {
             ////// 1. Connect to database
@@ -41,7 +57,7 @@ public class Profile {
                 System.err.print("Profile>createUser() Error getting nextMsgID");
                 exit(1);
             }
-            
+
             // create a profile instance Profile(String userID, String name, String password, java.sql.Date dateOfBirth, Timestamp lastlogin, String email)
             Profile p = new Profile(Integer.toString(nextUserID), name, password, birthdate, new Timestamp(new java.util.Date().getTime()), email);
             p.insertToDb(con);
@@ -104,13 +120,28 @@ public class Profile {
                     + "WHERE userID1 = ? OR userID2 = ?";
             PreparedStatement prep = con.prepareStatement(selectSQL);
             prep.setString(1, userID1);
-            prep.setString(1, userID1);
-            ResultSet firstHop = prep.executeQuery(selectSQL);
+            prep.setString(2, userID1);
+            ResultSet firstHop = prep.executeQuery();
 
             while(firstHop.next()){
                 if(firstHop.getString(1).equals(userID2)) {
                     threeDegreesPath.add(userID2);
+                    pathFound = true;
+                    break;
                 }
+            }
+
+            if(pathFound){
+                Iterator<String> it = threeDegreesPath.iterator();
+                System.out.println("The path between user " + userID1 + " and user " + userID2 + " is: ");
+                while(it.hasNext()){
+                    System.out.println("\t" + it.next());
+                }
+
+                con.close();
+                prep.close();
+                firstHop.close();
+                return;
             }
 
             ///// 3. Go through all of userID1 friends' friends list (hop 2) for userID2
@@ -125,13 +156,15 @@ public class Profile {
                         + "WHERE userID1 = ? OR userID2 = ?";
                 prep = con.prepareStatement(selectSQL);
                 prep.setString(1, userID3);
-                prep.setString(1, userID3);
-                ResultSet secondHop = prep.executeQuery(selectSQL);
+                prep.setString(2, userID3);
+                ResultSet secondHop = prep.executeQuery();
 
                 while (secondHop.next()) {
                     if (firstHop.getString(1).equals(userID2)) {
                         threeDegreesPath.add(userID3);
                         threeDegreesPath.add(userID2);
+                        pathFound = true;
+                        break;
                     }else{
                         secondSet.put(secondHop.getString(1), userID3);
                     }
@@ -139,6 +172,18 @@ public class Profile {
                 secondHop.close();
             }
 
+            if(pathFound){
+                Iterator<String> it = threeDegreesPath.iterator();
+                System.out.println("The path between user " + userID1 + " and user " + userID2 + " is: ");
+                while(it.hasNext()){
+                    System.out.println("\t" + it.next());
+                }
+
+                con.close();
+                prep.close();
+                firstHop.close();
+                return;
+            }
 
             ///// 4. Go through all of userID1 friends friends friend list (hop 3) for userID2
             Iterator<String> it = secondSet.keySet().iterator();
@@ -149,8 +194,8 @@ public class Profile {
                         + "WHERE userID1 = ? OR userID2 = ?";
                 prep = con.prepareStatement(selectSQL);
                 prep.setString(1, userID3);
-                prep.setString(1, userID3);
-                ResultSet thirdHop = prep.executeQuery(selectSQL);
+                prep.setString(2, userID3);
+                ResultSet thirdHop = prep.executeQuery();
 
                 while (thirdHop.next()) {
                     if (thirdHop.getString(1).equals(userID2)) {
@@ -172,22 +217,22 @@ public class Profile {
 
         if(threeDegreesPath.contains(userID2)){
             Iterator<String> it = threeDegreesPath.iterator();
-            System.out.println("The path between " + userID1 + " and " + userID2 + " is: ");
+            System.out.println("The path between user " + userID1 + " and user " + userID2 + " is: ");
             while(it.hasNext()){
                 System.out.println("\t" + it.next());
             }
         }
         else{
-            System.out.println("There is not path between " + userID1 + " and " + userID2);
+            System.out.println("There is not path between user " + userID1 + " and user " + userID2);
         }
     }
 
     /**
      * Given a string on which to match any user in the system, any item in this
      * string must be matched against any significant field of a user’s profile.
-     * That is if the user searches for “xyz abc”, the results should be the set
-     * of all profiles that match “xyz” union the set of all profiles that
-     * matches “abc”
+     * That is if the user searches for xyz abc, the results should be the set
+     * of all profiles that match xyz union the set of all profiles that
+     * matches abc
      */
     public static void searchForUser() {
         try{
@@ -223,7 +268,7 @@ public class Profile {
             System.out.println("The matches are: ");
             Iterator<Profile> allMatches = matches.iterator();
             while(allMatches.hasNext()){
-                new Profile p = allMatches.next();
+                Profile p = allMatches.next();
                 System.out.println("userID: " + p.getUserID());
                 System.out.println("\tName: " + p.getName());
             }
@@ -261,7 +306,7 @@ public class Profile {
             }
             else {
                 System.err.print("User login or password is incorrect");
-                exit(1);
+                return false;
             }
 
             con.close();
@@ -289,9 +334,9 @@ public class Profile {
                     + "Set lastLogin = ?"
                     + "WHERE userid = ?";
             PreparedStatement prep = con.prepareStatement(update);
-            prep.setTimestamp(new Timestamp(new java.util.Date().getTime());
+            prep.setTimestamp(1, getCurrentTimeStamp());
             prep.setString(2, userID);
-            prep.executeUpdate(update);
+            prep.execute();
 
 
             ///// 3. Close connections to db, return to main menu
@@ -305,12 +350,12 @@ public class Profile {
         }
     }
 
-    /*private static String getCurrentTimeStamp() {
+    private static java.sql.Timestamp getCurrentTimeStamp() {
 
         java.util.Date today = new java.util.Date();
-        return dateFormat.format(today.getTime());
+        return new java.sql.Timestamp(today.getTime());
 
-    }*/
+    }
 
     private String userID;
     private String name;
@@ -319,16 +364,17 @@ public class Profile {
     private java.sql.Timestamp lastlogin;
     private String email;
     /**
-     * 
+     *
      * @param con
-     * @return 0 success and >0 fail  
+     * @return 0 success and >0 fail
      */
     public int insertToDb(Connection con) {
         //INSERT INTO profile (userid,name,password,date_of_birth,lastlogin) VALUES ('8','Brynne','WRG10AGK0MZ','05-Sep-96','30-Nov-17');
         String insertSQL = "INSER" +
-                "T INTO profile (userid,name,password,date_of_birth,lastlogin) "
+                "T INTO profile (userid,name,password,date_of_birth,lastlogin, email) "
                 + "VALUES ("
                 + " ?"
+                + ",?"
                 + ",?"
                 + ",?"
                 + ",?"
@@ -341,6 +387,7 @@ public class Profile {
             preparedStatement.setString(3, password);
             preparedStatement.setDate(4, dateOfBirth);
             preparedStatement.setTimestamp(5, lastlogin);
+            preparedStatement.setString(6, email);
 
             preparedStatement.executeUpdate();
         } catch (SQLException Ex) {

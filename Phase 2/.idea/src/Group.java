@@ -19,11 +19,11 @@ public class Group {
      * @param userID current user that is logged in
      */
     public static void createGroup(String userID) {
-        // 1. get group name 
-        // 2. get description 
-        // 3. get limit 
-        // 4. add new group 
-        // 5. make current user a member with manager priviligoues 
+        // 1. get group name
+        // 2. get description
+        // 3. get limit
+        // 4. add new group
+        // 5. make current user a member with manager priviligoues
 
         String groupName = UserInput.getLine20("Enter a group name ");
         String discription = UserInput.getLine200("Enter group description");
@@ -33,7 +33,7 @@ public class Group {
             SocialPantherCon sCon = new SocialPantherCon();
             Connection con = sCon.getConnection();
 
-            // 4. add new group 
+            // 4. add new group
             // 4.1 get next posible gID
             String selectSQL = "select max(to_number(regexp_substr(gID, '\\d+'))) msgid from GROUPS";
             Statement stmt = con.createStatement();
@@ -50,7 +50,7 @@ public class Group {
                 System.out.println("Failed to add group to DB errer");
             }
             con = sCon.getConnection();
-            // 5. make current user a member with manager priviligoues 
+            // 5. make current user a member with manager priviligoues
 //            INSERT INTO groupMembership (gID, userID, role) VALUES (1, 29, 'manager');
             selectSQL = "INSERT INTO groupMembership ("
                     + "gID"
@@ -128,10 +128,10 @@ public class Group {
      * @param userID current user that is logged in
      */
     public static void initiateAddingGroup(String userID) {
-        // 1. Dispay all the groups that this user is not member of 
-        // 2. Get gID to which user want to sign up 
-        // 3. Check if gtoupmember + group Requests not > limit 
-        // 4. if not sent the request 
+        // 1. Dispay all the groups that this user is not member of
+        // 2. Get gID to which user want to sign up
+        // 3. Check if gtoupmember + group Requests not > limit
+        // 4. if not sent the request
 
         try {
             SocialPantherCon sCon = new SocialPantherCon();
@@ -156,7 +156,7 @@ public class Group {
             int gID = UserInput.getInt("Enter a group you want to sign up for >");
             String message = UserInput.getLine200("Enter you message for the group ");
 
-            // 3. Check if gtoupmember + group Requests not > limit 
+            // 3. Check if gtoupmember + group Requests not > limit
             selectSQL = "select count(*) as count\n"
                     + "from groupmembership gm\n"
                     + "FULL OUTER JOIN pendinggroupmembers pm on gm.GID = pm.GID\n"
@@ -191,7 +191,7 @@ public class Group {
                 return;
             }
 
-            // send request 
+            // send request
             if (isAllowed) {
                 selectSQL = "INSERT INTO pendingGroupmembers ( "
                         + " gID "

@@ -15,6 +15,8 @@ public class Friends {
      * @param userID2
      */
     public static Boolean initiateFriendship(String userID1, String userID2, String message){
+        //make user input here
+
         try {
             ///// 1. Connect to database
             SocialPantherCon sCon = new SocialPantherCon();
@@ -68,9 +70,8 @@ public class Friends {
      relation to the friends or groupMembership relation. The remaining requests which were not
      selected are declined and removed from pendingFriends and pendingGroupmembers relations.
      * @param userID1
-     * @param userID2
      */
-    public void confirmFriendship(String userID1){
+    public static void confirmFriendship(String userID1){
         try{
             SocialPantherCon sCon = new SocialPantherCon();
             Connection con = sCon.getConnection();
@@ -87,7 +88,7 @@ public class Friends {
             System.out.println("Here are all your friend requests: ");
             while(pendingFriends.next()){
                 System.out.println(pendingFriends.getString(1)
-                    + "\n\t" + pendingFriends.getString(2));
+                        + "\n\t" + pendingFriends.getString(2));
             }
 
             pendingFriends.first();
@@ -116,7 +117,7 @@ public class Friends {
                 while(pendingGroups.next()){
                     members.add(pendingGroups.getString(1));
                     System.out.println(pendingGroups.getString(1)
-                        + "\n\t" + pendingGroups.getString(2));
+                            + "\n\t" + pendingGroups.getString(2));
                 }
                 groupRequests.put(groupsManaged.getString(1), members);
                 members.clear();
@@ -186,8 +187,8 @@ public class Friends {
                     } while (select != 1 || select != 2 || select != 3);
 
                     if (select == 1) {
-                        message = "Please select userID to confirm friendship: ";
-                        String userID2 = UserInput.getID(message);
+                        System.out.println("Please select userID to confirm friendship: ");
+                        String userID2 = UserInput.getID();
 
                         //check if input is valid
                         //look through pending friends
@@ -200,14 +201,14 @@ public class Friends {
                         prep.executeUpdate();
                         prep.close();
                     } else {
-                        message = "Please select groupID you want to confirm for: ";
-                        String gID = UserInput.getID(message);
+                        System.out.println("Please select groupID you want to confirm for: ");
+                        String gID = UserInput.getID();
 
                         //confirm that this person is manager
                         //look through managed groups
 
-                        message = "Please select userID of new group member: ";
-                        String userID2 = UserInput.getID(message);
+                        System.out.println("Please select userID of new group member: ");
+                        String userID2 = UserInput.getID();
 
                         //confirm that this person has sent in a request
                         //look through group for that grouprequests
@@ -244,7 +245,7 @@ public class Friends {
 
         } catch (SQLException Ex){
             System.out.println("Friends >> Error: "
-                + Ex.toString());
+                    + Ex.toString());
         }
 
         return;
@@ -271,7 +272,7 @@ public class Friends {
      prompted to either select to retrieve another friend’s profile or return to the main menu.
      *
      */
-    public void displayFriends(String userID1){
+    public static void displayFriends(String userID1){
         try{
             SocialPantherCon sCon = new SocialPantherCon();
             Connection con = sCon.getConnection();
@@ -319,7 +320,8 @@ public class Friends {
             int keepLooking = UserInput.getInt(message);
 
             while(keepLooking == 1) {
-                String userID2 = UserInput.getID("Please enter the ID of the user you want to look at: ");
+                System.out.println("Please enter the ID of the user you want to look at: ");
+                String userID2 = UserInput.getID();
                 if(toDisplay.contains(userID2)){
                     selectSQL = "SELECT userID, name, email, date_of_birth, lastLogin\n"
                             + "FROM PROFILE\n"
@@ -329,11 +331,11 @@ public class Friends {
                     ResultSet rs = prep.executeQuery();
 
                     rs.next();
-                        System.out.print("UserID: " + userID2
-                                        + "\nName: " + rs.getString(2)
-                                        + "\nEmail: " + rs.getString(3)
-                                        + "\nDate of Birth: " + rs.getDate(4)
-                                        + "\nLast Login: " + rs.getDate(5));
+                    System.out.print("UserID: " + userID2
+                            + "\nName: " + rs.getString(2)
+                            + "\nEmail: " + rs.getString(3)
+                            + "\nDate of Birth: " + rs.getDate(4)
+                            + "\nLast Login: " + rs.getDate(5));
 
                     message = "Would you like to look up another profile?\n"
                             + "Options: \n"

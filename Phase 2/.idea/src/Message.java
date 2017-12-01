@@ -36,7 +36,7 @@ public class Message {
             ////////////////////////////////////////////////////////////////////
             SocialPantherCon sCon = new SocialPantherCon();
             Connection con = sCon.getConnection();
-            List<ProfileTmp> allFriendsprofiles = new LinkedList<ProfileTmp>();
+            List<Profile> allFriendsprofiles = new LinkedList<Profile>();
 
             // get all frieds if user in in userid2
             String selectSQL = "SELECT FRIENDS.USERID1, PROFILE.NAME\n"
@@ -49,7 +49,7 @@ public class Message {
             ResultSet rs = preparedStatement.executeQuery();
 
             while (rs.next()) {
-                allFriendsprofiles.add(new ProfileTmp(rs.getString(1), rs.getString(2)));
+                allFriendsprofiles.add(new Profile(rs.getString(1), rs.getString(2)));
             }
 
             //get all frieds if user in in userid1
@@ -62,7 +62,7 @@ public class Message {
             preparedStatement.setString(1, userID);
             rs = preparedStatement.executeQuery();
             while (rs.next()) {
-                allFriendsprofiles.add(new ProfileTmp(rs.getString(1), rs.getString(2)));
+                allFriendsprofiles.add(new Profile(rs.getString(1), rs.getString(2)));
             }
 
             System.out.println("Lits of all of your friends:");
@@ -74,10 +74,10 @@ public class Message {
             /////////////////// 2. get user id /////////////////////////////////
             ////////////////////////////////////////////////////////////////////
             boolean isInFriendList = false;
-            ProfileTmp toUser = null;
+            Profile toUser = null;
             do {
                 String toUserID = UserInput.getID();
-                //validate 
+                //validate
                 for (int i = 0; i < allFriendsprofiles.size(); i++) {
                     if (toUserID.equals(allFriendsprofiles.get(i).getUserID())) {
                         isInFriendList = true;
@@ -99,7 +99,7 @@ public class Message {
 
             /////////////// 4. send message to the user db insert///////////////
             ////////////////////////////////////////////////////////////////////
-            // get max values of msgID. Assuption id is alway numeric 
+            // get max values of msgID. Assuption id is alway numeric
             selectSQL = "select max(to_number(regexp_substr(msgid, '\\d+'))) msgid from MESSAGES";
             stmt = con.createStatement();
             rs = stmt.executeQuery(selectSQL);
@@ -143,9 +143,9 @@ public class Message {
      */
     public static void sendMessageToGroup(String userID) {
         //1. Show all groups of current user
-        //2. Get groupID 
-        //3. Get message multilined. Show the name of the group 
-        //4. Send the message to the group 
+        //2. Get groupID
+        //3. Get message multilined. Show the name of the group
+        //4. Send the message to the group
 
         try {
             /////////// 1. show all friends of the user ////////////////////////
@@ -179,7 +179,7 @@ public class Message {
             Group toGroup = null;
             do {
                 String toGroupID = UserInput.getID();
-                //validate 
+                //validate
                 for (int i = 0; i < allGroups.size(); i++) {
                     if (toGroupID.equals(allGroups.get(i).getgID())) {
                         isInGroupList = true;
@@ -192,7 +192,7 @@ public class Message {
             } while (!isInGroupList);
             ////////////////////////////////////////////////////////////////////
 
-            //////// 3.  Get message multilined. Show the name of the group/// 
+            //////// 3.  Get message multilined. Show the name of the group///
             ////////////////////////////////////////////////////////////////////
             System.out.println("For group =>" + toGroup.getName());
             String msgStr = UserInput.getMessage();
@@ -201,7 +201,7 @@ public class Message {
 
             /////////////// 4. Send the message to the group///////////////
             ////////////////////////////////////////////////////////////////////
-            // get max values of msgID. Assuption id is alway numeric 
+            // get max values of msgID. Assuption id is alway numeric
             selectSQL = "select max(to_number(regexp_substr(msgid, '\\d+'))) msgid from MESSAGES";
             stmt = con.createStatement();
             rs = stmt.executeQuery(selectSQL);
@@ -235,7 +235,7 @@ public class Message {
      */
     public static void displayMessages(String userID) {
         //1. Get all messages for a given user
-        //2. Display all those messages 
+        //2. Display all those messages
         try {
             SocialPantherCon sCon = new SocialPantherCon();
             Connection con = sCon.getConnection();
@@ -276,8 +276,8 @@ public class Message {
      */
     public static void displayNewMessages(String userID) {
 
-        // 2. Get all the messages from lastLoggedIn onword 
-        // 3. Display it 
+        // 2. Get all the messages from lastLoggedIn onword
+        // 3. Display it
         try {
             SocialPantherCon sCon = new SocialPantherCon();
             Connection con = sCon.getConnection();
@@ -289,7 +289,7 @@ public class Message {
                     + "INNER JOIN MESSAGERECIPIENT MR ON MR.MSGID=M.MSGID\n"
                     + "INNER JOIN PROFILE P ON MR.USERID = P.USERID\n"
                     + "WHERE MR.USERID=? AND \n"
-                    + "        TO_DATE (TO_CHAR (P.LASTLOGIN, 'YYYY-MON-DD HH24:MI:SS'),'YYYY-MON-DD HH24:MI:SS')<= M.DATESENT";// 1. DATESENT is after last logged in 
+                    + "        TO_DATE (TO_CHAR (P.LASTLOGIN, 'YYYY-MON-DD HH24:MI:SS'),'YYYY-MON-DD HH24:MI:SS')<= M.DATESENT";// 1. DATESENT is after last logged in
 
             Statement stmt = con.createStatement();
             PreparedStatement preparedStatement = con.prepareStatement(selectSQL);
@@ -326,9 +326,9 @@ public class Message {
      */
     public static void topMessages() {
 
-        // 3. count number of sent + received messages for each user for past X months 
-        // 4. get top K of those users and display them 
-        // 1. get top K 
+        // 3. count number of sent + received messages for each user for past X months
+        // 4. get top K of those users and display them
+        // 1. get top K
         int topK = UserInput.getInt("Enter Top K values >");
         // 2. get past X months
         int pastXMonths = UserInput.getInt("Enter past X months >");
@@ -344,7 +344,7 @@ public class Message {
             SocialPantherCon sCon = new SocialPantherCon();
             Connection con = sCon.getConnection();
 
-            // for past Date  Top K 
+            // for past Date  Top K
             String selectSQL = "select * from \n"
                     + "(\n"
                     + "  select sCount.userID, sCount.name , sCount.countSent+rCount.countReceived as RScount\n"
@@ -369,7 +369,7 @@ public class Message {
                     + "  ORDER BY sCount.countSent+rCount.countReceived DESC\n"
                     + "  ) t1\n"
                     + "WHERE ROWNUM <= ?\n"
-                    + "ORDER BY ROWNUM";// 1. DATESENT is after last logged in 
+                    + "ORDER BY ROWNUM";// 1. DATESENT is after last logged in
 
             Statement stmt = con.createStatement();
             PreparedStatement preparedStatement = con.prepareStatement(selectSQL);

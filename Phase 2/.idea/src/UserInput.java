@@ -1,10 +1,11 @@
-
 import java.util.Scanner;
+import java.util.Set;
+import java.util.HashSet;
 
 /*
- * This class will have static methods to get the user input and validate it 
- * if it fails the validation it should keep propting untill the correct input 
- * is entered 
+ * This class will have static methods to get the user input and validate it
+ * if it fails the validation it should keep propting untill the correct input
+ * is entered
  */
 /**
  *
@@ -31,6 +32,20 @@ public class UserInput {
     public static String getID() {
         String userID;
         Scanner scanner = new Scanner(System.in);
+        int size;
+        String input;
+        do {
+            System.out.print("Enter id (<20 chars) >");
+            input = scanner.next();
+            size = input.length();
+        } while (size > 20);
+        return input;
+    }
+
+    public static String getUserName(String message) {
+        String userID;
+        Scanner scanner = new Scanner(System.in);
+        System.out.println(message);
         int size;
         String input;
         do {
@@ -93,6 +108,16 @@ public class UserInput {
             size = input.length();
         } while (size > 200 || size == 0);
         return input;
+    }
+
+    public static Set<String> getSearch(String message){
+        Set<String> searches = new HashSet<String>();
+        Scanner scanner = new Scanner(System.in);
+        System.out.print(message);
+        while(scanner.hasNext()){
+            searches.add(scanner.next());
+        }
+        return searches;
     }
 
 }
