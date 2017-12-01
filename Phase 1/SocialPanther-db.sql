@@ -2,7 +2,7 @@ drop table profile cascade constraints;
 CREATE TABLE PROFILE(
 	userID	varchar2(20),
 	name	varchar2(20) NOT NULL,
-	email	varchar2(20) NOT NULL,
+	email	varchar2(20),
 	password	varchar2(20) NOT NULL,
 	date_of_birth	date,
 	lastLogin	timestamp,
