@@ -15,10 +15,15 @@ public class Profile {
      * Given a name, email address, and date of birth, add a new user to the
      * system by inserting as new entry in the profile relation
      */
-    public static void createUser(String name, String email, java.sql.Date birthdate, String password) {
+    public static void createUser() {
         //requirements for creating a profile
         //userID will be created by finding the next available number for the ID
         //last login will be added at this time
+
+        String name;
+        String email;
+        java.sql.Date birthdate;
+        String password;
 
         try {
             ////// 1. Connect to database
@@ -44,19 +49,6 @@ public class Profile {
             con.close();
             stmt.close();
             rs.close();
-            
-//            int userID;
-//            String idQuery = "";
-
-//            Statement stmt = con.createStatement();
-//            PreparedStatement preparedStatement = con.prepareStatement(idQuery);
-//            ResultSet rs = preparedStatement.executeQuery();
-
-            ///// 3. Insert into database
-//            String insertQuery = "INSERT INTO PROFILE"
-//                    + "(userid, name, password, date_of_birth, lastlogin)" + "VALUES"
-//                    + "('" + userID + "', '" + name + "', '" + email + "', to_date('" + birthdate
-//                    + ", 'DD-MON-YY'), to_timestamp('" + getCurrentTimeStamp() + "', 'yyyy/mm/dd hh24:mi:ss'))";
 
         } catch (SQLException Ex) {
             System.out.println("Message >> Error: " + Ex.toString());
@@ -97,13 +89,12 @@ public class Profile {
      * with at most 3 hop between them. A hop is defined as a friendship between
      * any two users
      */
-    public static Set<String> threeDegrees(String userID1, String userID2) {
+    public static void threeDegrees(String userID1, String userID2) {
+        LinkedHashSet<String> threeDegreesPath = new LinkedHashSet<String>();
         try{
             ///// 1. Connect to database
             SocialPantherCon sCon = new SocialPantherCon();
             Connection con = sCon.getConnection();
-            Set<String> threeDegreesPath = new HashSet<String>();
-            Set<String> alreadyChecked = new HashSet<String>();
             threeDegreesPath.add(userID1);
             Boolean pathFound = false;
 
@@ -116,22 +107,16 @@ public class Profile {
             prep.setString(1, userID1);
             ResultSet firstHop = prep.executeQuery(selectSQL);
 
-
-
             while(firstHop.next()){
                 if(firstHop.getString(1).equals(userID2)) {
                     threeDegreesPath.add(userID2);
-                    return threeDegreesPath;
                 }
             }
-
-            alreadyChecked.add(userID1);
 
             ///// 3. Go through all of userID1 friends' friends list (hop 2) for userID2
             //return cursor back to first pointer
             firstHop.first();
-            Set<String> secondSet = new HashSet<String>();
-
+            Map<String, String> secondSet = new HashMap<String, String>();
 
             while(firstHop.next()) {
                 String userID3 = firstHop.getString(1);
@@ -144,26 +129,19 @@ public class Profile {
                 ResultSet secondHop = prep.executeQuery(selectSQL);
 
                 while (secondHop.next()) {
-                    if (!alreadyChecked.contains(firstHop.getString(1))) {
-                        if (firstHop.getString(1).equals(userID2)) {
-                            threeDegreesPath.add(userID3);
-                            threeDegreesPath.add(userID2);
-                            return threeDegreesPath;
-                        }
-                        else{
-                            secondSet.add(secondHop.getString(1));
-                        }
+                    if (firstHop.getString(1).equals(userID2)) {
+                        threeDegreesPath.add(userID3);
+                        threeDegreesPath.add(userID2);
+                    }else{
+                        secondSet.put(secondHop.getString(1), userID3);
                     }
                 }
-
-                alreadyChecked.add(userID3);
                 secondHop.close();
             }
 
-            ///// 4. Go through all of userID1 friends friends friend list (hop 3) for userID2
 
-            //need to add a way to figure out which intermediate friend got us here..., maybe use a HashMap<String, Set>
-            Iterator<String> it = secondSet.iterator();
+            ///// 4. Go through all of userID1 friends friends friend list (hop 3) for userID2
+            Iterator<String> it = secondSet.keySet().iterator();
             while(it.hasNext()){
                 String userID3 = it.next();
                 selectSQL = "SELECT userID\n"
@@ -175,19 +153,12 @@ public class Profile {
                 ResultSet thirdHop = prep.executeQuery(selectSQL);
 
                 while (thirdHop.next()) {
-                    if (!alreadyChecked.contains(firstHop.getString(1))) {
-                        if (firstHop.getString(1).equals(userID2)) {
-                            threeDegreesPath.add(userID3);
-                            threeDegreesPath.add(userID2);
-                            return threeDegreesPath;
-                        }
-                        else{
-                            secondSet.add(thirdHop.getString(1));
-                        }
+                    if (thirdHop.getString(1).equals(userID2)) {
+                        threeDegreesPath.add(secondSet.get(userID3));
+                        threeDegreesPath.add(userID3);
+                        threeDegreesPath.add(userID2);
                     }
                 }
-
-                alreadyChecked.add(userID3);
                 thirdHop.close();
             }
 
@@ -195,17 +166,20 @@ public class Profile {
             prep.close();
             firstHop.close();
 
-            ///// 5. If no path, return null
-            return null;
-
-
-            ///// Better idea might be to apply Dijkstra's with each hop/friendship a weight of 1
-
-
         } catch (SQLException Ex) {
             System.out.println("Message >> Error: " + Ex.toString());
         }
-        return null;
+
+        if(threeDegreesPath.contains(userID2)){
+            Iterator<String> it = threeDegreesPath.iterator();
+            System.out.println("The path between " + userID1 + " and " + userID2 + " is: ");
+            while(it.hasNext()){
+                System.out.println("\t" + it.next());
+            }
+        }
+        else{
+            System.out.println("There is not path between " + userID1 + " and " + userID2);
+        }
     }
 
     /**
@@ -215,16 +189,45 @@ public class Profile {
      * of all profiles that match “xyz” union the set of all profiles that
      * matches “abc”
      */
-    public static void searchForUser(String search) {
+    public static void searchForUser() {
         try{
             ///// 1. Connect to database
             SocialPantherCon sCon = new SocialPantherCon();
             Connection con = sCon.getConnection();
 
-            ///// 2. parse string for each keyword added to search
+            ///// 2. Get string and parse string for each keyword added to search
+            String message = "Please type search keywords: ";
+            Set<String> searches = new HashSet<String>();
+            searches = UserInput.getSearch(message);
 
+            ///// 3. Perform search in userID, name, and email for each keyword
+            Set<Profile> matches = new HashSet<Profile>();
+            Iterator<String> it = searches.iterator();
+            String check;
+            while(it.hasNext()){
+                check = it.next();
+                String selectSQL = "SELECT userID, name\n"
+                        + "FROM profile\n"
+                        + "WHERE userID LIKE ? OR name LIKE ? OR email LIKE ?";
+                PreparedStatement prep = con.prepareStatement(selectSQL);
+                prep.setString(1, "*" + check + "*");
+                prep.setString(2, "*" + check + "*");
+                prep.setString(3, "*" + check + "*");
+                ResultSet rs = prep.executeQuery();
 
-            ///// 3. Perform search in userID, name, email, dateofbirth for each keyword
+                while(rs.next()){
+                    matches.add(new Profile(rs.getString(1), rs.getString(2)));
+                }
+            }
+
+            System.out.println("The matches are: ");
+            Iterator<Profile> allMatches = matches.iterator();
+            while(allMatches.hasNext()){
+                new Profile p = allMatches.next();
+                System.out.println("userID: " + p.getUserID());
+                System.out.println("\tName: " + p.getName());
+            }
+
 
         } catch (SQLException Ex) {
             System.out.println("Message >> Error: " + Ex.toString());
@@ -282,11 +285,12 @@ public class Profile {
             Connection con = sCon.getConnection();
 
             ///// 2. Add current time to last logged in time
-            String update = "UPDATE profile"
-                    + "Set lastLogin = " + new Timestamp(new java.util.Date().getTime())
+            String update = "UPDATE profile "
+                    + "Set lastLogin = ?"
                     + "WHERE userid = ?";
             PreparedStatement prep = con.prepareStatement(update);
-            prep.setString(1, userID);
+            prep.setTimestamp(new Timestamp(new java.util.Date().getTime());
+            prep.setString(2, userID);
             prep.executeUpdate(update);
 
 
@@ -330,7 +334,6 @@ public class Profile {
                 + ",?"
                 + ",?)";
         try {
-            Statement stmt = con.createStatement();
             PreparedStatement preparedStatement = con.prepareStatement(insertSQL);
 
             preparedStatement.setString(1, userID);
@@ -339,7 +342,7 @@ public class Profile {
             preparedStatement.setDate(4, dateOfBirth);
             preparedStatement.setTimestamp(5, lastlogin);
 
-            ResultSet rs = preparedStatement.executeQuery();
+            preparedStatement.executeUpdate();
         } catch (SQLException Ex) {
             System.err.println("Profile>insertToDb() >> Error: "
                     + Ex.toString());
