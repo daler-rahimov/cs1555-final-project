@@ -10,7 +10,7 @@
  */
 public class GroupTest {
     public static void main(String args[]){
-//        Group.createGroup("1");
+//        Group.createGroup("2");
         Group.initiateAddingGroup("1");
     }
 }

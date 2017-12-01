@@ -49,7 +49,7 @@ public class Group {
             } else {
                 System.out.println("Failed to add group to DB errer");
             }
-
+            con = sCon.getConnection();
             // 5. make current user a member with manager priviligoues 
 //            INSERT INTO groupMembership (gID, userID, role) VALUES (1, 29, 'manager');
             selectSQL = "INSERT INTO groupMembership ("
@@ -59,7 +59,7 @@ public class Group {
                     + ") VALUES ("
                     + "  ?"
                     + ", ?"
-                    + ", 'manager'"
+                    + ", 'manager' "
                     + ")";
             PreparedStatement preparedStatement = con.prepareStatement(selectSQL);
             preparedStatement.setString(1, group.getgID());
@@ -163,6 +163,7 @@ public class Group {
                     + "where gm.gID = ? or pm.gID = ?";
             preparedStatement = con.prepareStatement(selectSQL);
             preparedStatement.setString(1, Integer.toString(gID));
+            preparedStatement.setString(2, Integer.toString(gID));
             rs = preparedStatement.executeQuery();
             int currMemberCount = Integer.MAX_VALUE;
             if (rs.next()) {
@@ -192,19 +193,22 @@ public class Group {
 
             // send request 
             if (isAllowed) {
-                selectSQL = "INSERT INTO pendingGroupmembers ("
-                        + "gID"
+                selectSQL = "INSERT INTO pendingGroupmembers ( "
+                        + " gID "
                         + ", userID"
                         + ", message"
-                        + ") VALUES ("
-                        + "  ?"
-                        + ", ?"
-                        + ", ?";
+                        + ") VALUES ( "
+                        + " ?"
+                        + ",?"
+                        + ",? )";
                 preparedStatement = con.prepareStatement(selectSQL);
-                preparedStatement.setString(1,Integer.toString(gID) );
-                preparedStatement.setString(1, userID);
-                preparedStatement.setString(1, message);
+                preparedStatement.setString(1, Integer.toString(gID));
+                preparedStatement.setString(2, userID);
+                preparedStatement.setString(3, message);
                 rs = preparedStatement.executeQuery();
+                if (rs.next()){
+                    System.out.println("Your request has been sent. ");
+                }
             }
 
             ////////////////////////////////////////////////////////////////////
@@ -212,7 +216,7 @@ public class Group {
 //            stmt.close();
             rs.close();
         } catch (SQLException Ex) {
-            System.out.println("Message >> Error: "
+            System.out.println("Group>initiateAddingGroup() >> Error: "
                     + Ex.toString());
         }
     }
