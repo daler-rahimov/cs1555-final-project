@@ -58,7 +58,7 @@ public class Friends {
                     + Ex.toString());
         }
         return false;
-    };
+    }
 
     /**
      *This task should first display a formatted, numbered list of all outstanding friends and group
@@ -137,14 +137,14 @@ public class Friends {
             if(selectionChoice == 1){
                 //insert all friends
                 while(pendingFriends.next()){
-                    String insertSQL = "INSERT INTO friends(userID1, userID2, JDate, message) VALUES("
-                            + userID1 + ", "
-                            + pendingFriends.getString(1) + ", "
-                            + new Timestamp(new java.util.Date().getTime()) + ", "
-                            + pendingFriends.getString(2) + ")";
-                    Statement stm = con.createStatement();
-                    stm.execute(insertSQL);
-                    stm.close();
+                    String insertSQL = "INSERT INTO friends(userID1, userID2, JDate, message) VALUES(?, ?, ?, ?)";
+                    prep = con.prepareStatement(insertSQL);
+                    prep.setString(1, userID1);
+                    prep.setString(2, pendingFriends.getString(1));
+                    prep.setTimestamp(3, new Timestamp(new java.util.Date().getTime()));
+                    prep.setString(4, pendingFriends.getString(2));
+                    prep.executeUpdate();
+                    prep.close();
                 }
 
                 String curGroup = null;
@@ -156,12 +156,12 @@ public class Friends {
                     members = groupRequests.get(curGroup);
                     Iterator<String> mem = members.iterator();
                     while(mem.hasNext()) {
-                        String insertSQl = "INSERT INTO groupMembership(gID, userID) VALUES("
-                                + curGroup + ", "
-                                + mem.next() + ")";
-                        Statement stm = con.createStatement();
-                        stm.execute(insertSQl);
-                        stm.close();
+                        String insertSQl = "INSERT INTO groupMembership(gID, userID) VALUES(?, ?)";
+                        prep = con.prepareStatement(insertSQl);
+                        prep.setString(1, curGroup);
+                        prep.setString(2, mem.next());
+                        prep.executeUpdate();
+                        prep.close();
                     }
                 }
             }
@@ -191,15 +191,14 @@ public class Friends {
 
                         //check if input is valid
                         //look through pending friends
-
-                        String insertSQL = "INSERT INTO friends(userID1, userID2, JDate, message) VALUES("
-                                + userID1 + ", "
-                                + userID2 + ", "
-                                + new Timestamp(new java.util.Date().getTime()) + ", "
-                                + pendingFriends.getString(2) + ")";
-                        Statement stm = con.createStatement();
-                        stm.execute(insertSQL);
-                        stm.close();
+                        String insertSQL = "INSERT INTO friends(userID1, userID2, JDate, message) VALUES(?, ?, ?, ?)";
+                        prep = con.prepareStatement(insertSQL);
+                        prep.setString(1, userID1);
+                        prep.setString(2, userID2);
+                        prep.setTimestamp(3, new Timestamp(new java.util.Date().getTime()));
+                        prep.setString(4, pendingFriends.getString(2));
+                        prep.executeUpdate();
+                        prep.close();
                     } else {
                         message = "Please select groupID you want to confirm for: ";
                         String gID = UserInput.getID(message);
@@ -212,13 +211,12 @@ public class Friends {
 
                         //confirm that this person has sent in a request
                         //look through group for that grouprequests
-
-                        String insertSQl = "INSERT INTO groupMembership(gID, userID) VALUES("
-                                + gID + ", "
-                                + userID2 + ")";
-                        Statement stm = con.createStatement();
-                        stm.execute(insertSQl);
-                        stm.close();
+                        String insertSQl = "INSERT INTO groupMembership(gID, userID) VALUES(?, ?)";
+                        prep = con.prepareStatement(insertSQl);
+                        prep.setString(1, gID);
+                        prep.setString(2, userID2);
+                        prep.executeUpdate();
+                        prep.close();
                     }
                 }while(select != 3);
             }
@@ -250,7 +248,7 @@ public class Friends {
         }
 
         return;
-    };
+    }
 
     //make private method to get all friend request
 
@@ -362,5 +360,5 @@ public class Friends {
         }
 
 
-    };
+    }
 }
