@@ -13,3 +13,26 @@ Things to add/do:
 	6. Break confirmFriendships into smaller methods (Maya)
 	
 	7. Prompt instead of passing
+	
+	8. Add to ReadMe that friendShips are shown both ways for simplification purposes
+	
+	9. Fix current friends Table to show the friendships of all going to opposite way
+	
+	
+Status of Methods:
+	Friends:
+		displayFriends (Working)
+		confirmFriendship (need to add data to play with)
+		initiateFriendship (need to add data to play with)
+		
+	Profile:
+		login	(Working)
+		logout	(Working)
+		createUser	(Working)
+		dropUser (trigger issue)
+		threeDegrees (not yet)
+		searchForUser (infinite loop?? or just really slow??)
+		
+	Groups:
+	
+	Messages:
