@@ -4,5 +4,12 @@ Things to add/do:
 	2. friendship duplicates (ie username in backwards)
 	
 	3. Add emails to profile
+		Current state: allows for null in table, fix once we generate email data
 	
 	4. Add group limits to groups
+
+	5. for any getID, prompt before
+	
+	6. Break confirmFriendships into smaller methods (Maya)
+	
+	7. Prompt instead of passing
