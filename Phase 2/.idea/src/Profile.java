@@ -254,12 +254,14 @@ public class Profile {
                         + "FROM profile\n"
                         + "WHERE userID LIKE ? OR name LIKE ? OR email LIKE ?";
                 PreparedStatement prep = con.prepareStatement(selectSQL);
-                prep.setString(1, "*" + check + "*");
-                prep.setString(2, "*" + check + "*");
-                prep.setString(3, "*" + check + "*");
+                prep.setString(1, "%" + check + "%");
+                prep.setString(2, "%" + check + "%");
+                prep.setString(3, "%" + check + "%");
                 ResultSet rs = prep.executeQuery();
 
                 while(rs.next()){
+                    //System.out.println(rs.getString(1));
+                    //System.out.println("\t" + rs.getString(2));
                     matches.add(new Profile(rs.getString(1), rs.getString(2)));
                 }
             }
