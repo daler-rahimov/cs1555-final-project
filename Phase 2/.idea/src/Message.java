@@ -57,7 +57,7 @@ public class Message {
                     + "FROM FRIENDS\n"
                     + "INNER JOIN PROFILE ON FRIENDS.USERID2=PROFILE.USERID\n"
                     + "WHERE FRIENDS.USERID1=?";
-            stmt = con.createStatement();
+//            stmt = con.createStatement();
             preparedStatement = con.prepareStatement(selectSQL);
             preparedStatement.setString(1, userID);
             rs = preparedStatement.executeQuery();
