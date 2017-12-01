@@ -36,7 +36,7 @@ public class Message {
             ////////////////////////////////////////////////////////////////////
             SocialPantherCon sCon = new SocialPantherCon();
             Connection con = sCon.getConnection();
-            List<ProfileTmp> allFriendsprofiles = new LinkedList<ProfileTmp>();
+            List<Profile> allFriendsprofiles = new LinkedList<Profile>();
 
             // get all frieds if user in in userid2
             String selectSQL = "SELECT FRIENDS.USERID1, PROFILE.NAME\n"
@@ -49,7 +49,7 @@ public class Message {
             ResultSet rs = preparedStatement.executeQuery();
 
             while (rs.next()) {
-                allFriendsprofiles.add(new ProfileTmp(rs.getString(1), rs.getString(2)));
+                allFriendsprofiles.add(new Profile(rs.getString(1), rs.getString(2)));
             }
 
             //get all frieds if user in in userid1
@@ -62,7 +62,7 @@ public class Message {
             preparedStatement.setString(1, userID);
             rs = preparedStatement.executeQuery();
             while (rs.next()) {
-                allFriendsprofiles.add(new ProfileTmp(rs.getString(1), rs.getString(2)));
+                allFriendsprofiles.add(new Profile(rs.getString(1), rs.getString(2)));
             }
 
             System.out.println("Lits of all of your friends:");
@@ -74,7 +74,7 @@ public class Message {
             /////////////////// 2. get user id /////////////////////////////////
             ////////////////////////////////////////////////////////////////////
             boolean isInFriendList = false;
-            ProfileTmp toUser = null;
+            Profile toUser = null;
             do {
                 String toUserID = UserInput.getID();
                 //validate 
