@@ -16,7 +16,8 @@ drop table groups cascade constraints;
 create table groups (
 	gID varchar2(20)
 	, name varchar2(50) not null 
-	, description varchar2(200) 
+	, description varchar2(200)
+	, gLimit number
 	, constraint pk_groups primary key (gID) deferrable initially immediate
 );
 
