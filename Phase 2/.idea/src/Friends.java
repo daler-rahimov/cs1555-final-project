@@ -24,12 +24,12 @@ public class Friends {
 
             ///// 2. Check to make sure not friends by getting all of userID1's friends then looping through
             /////       to check that userID2 does not exist
-            String selectSQL = "SELECT userID\n"
+            String selectSQL = "SELECT userID2\n"
                     + "FROM FRIENDS\n"
-                    + "WHERE userID1 = ? OR userID2 = ?";
+                    + "WHERE userID1 = ?";
             PreparedStatement prep = con.prepareStatement(selectSQL);
             prep.setString(1, userID1);
-            prep.setString(1, userID1);
+            //prep.setString(1, userID1);
             ResultSet rs = prep.executeQuery();
 
             while(rs.next()){
@@ -76,12 +76,12 @@ public class Friends {
             SocialPantherCon sCon = new SocialPantherCon();
             Connection con = sCon.getConnection();
 
-            ///// 1. Find all friends request (where user is toUser in pending friends
+            ///// 1. Find all friends request (where user is toUser in pending friendsgit
             /////   List all friends request and display message
-            String selectSQL = "SELECT fromUserID, message\n"
-                    + "FROM pendingFriends"
-                    + "WHERE toUserID = ?";
-            PreparedStatement prep = con.prepareStatement(selectSQL);
+            String selectSQL = "SELECT fromID, message\n"
+                    + "FROM pendingFriends\n"
+                    + "WHERE toID = ?";
+            PreparedStatement prep = con.prepareStatement(selectSQL,  ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             prep.setString(1, userID1);
             ResultSet pendingFriends = prep.executeQuery();
 
@@ -91,14 +91,14 @@ public class Friends {
                         + "\n\t" + pendingFriends.getString(2));
             }
 
-            pendingFriends.first();
+            pendingFriends.beforeFirst();
 
             //// 2. Check if user is manager of group
             ////    if yes, collect all groupRequests where the user is manager. list all requests and display messages
             selectSQL ="SELECT gID\n"
                     + "FROM groupMembership\n"
                     + "WHERE userID = ? AND role = 'manager'";
-            prep = con.prepareStatement(selectSQL);
+            prep = con.prepareStatement(selectSQL, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             prep.setString(1, userID1);
             ResultSet groupsManaged = prep.executeQuery();
 
@@ -130,18 +130,29 @@ public class Friends {
                 String message = "Would you like to confirm all or manually select confirmations?\n"
                         + "Options: \n"
                         + "\t1. Select all\n"
-                        + "\t2. Manually select\n";
+                        + "\t2. Manually select\n"
+                        + "\t3. Delete all requests\n";
                 selectionChoice = UserInput.getInt(message);
-            }while(selectionChoice != 1 || selectionChoice !=2);
+            }while(selectionChoice <= 1 && selectionChoice >= 3);
 
             //// 4. If confirm all, send all requests to correct tables
             if(selectionChoice == 1){
                 //insert all friends
                 while(pendingFriends.next()){
+                    //one direction
                     String insertSQL = "INSERT INTO friends(userID1, userID2, JDate, message) VALUES(?, ?, ?, ?)";
                     prep = con.prepareStatement(insertSQL);
                     prep.setString(1, userID1);
                     prep.setString(2, pendingFriends.getString(1));
+                    prep.setTimestamp(3, new Timestamp(new java.util.Date().getTime()));
+                    prep.setString(4, pendingFriends.getString(2));
+                    prep.executeUpdate();
+
+                    //second direction
+                    insertSQL = "INSERT INTO friends(userID1, userID2, JDate, message) VALUES(?, ?, ?, ?)";
+                    prep = con.prepareStatement(insertSQL);
+                    prep.setString(1, pendingFriends.getString(1));
+                    prep.setString(2, userID1);
                     prep.setTimestamp(3, new Timestamp(new java.util.Date().getTime()));
                     prep.setString(4, pendingFriends.getString(2));
                     prep.executeUpdate();
@@ -173,18 +184,18 @@ public class Friends {
             ////    more than initially indicated? Or just make array whatever size of input??
             ////    Remove any accepted requests
             ////    Potentially break this down for
-            else {
+            else if(selectionChoice == 2) {
                 int select = 0;
                 do {
                     String message = "Would you like to confirm a friend or group member?\n"
-                            + "Options: "
+                            + "Options: \n"
                             + "\t1. Friend\n"
                             + "\t2. Groupmember\n"
                             + "\t3. Exit\n";
                     select = 0;
                     do {
                         select = UserInput.getInt(message);
-                    } while (select != 1 || select != 2 || select != 3);
+                    } while (selectionChoice <= 1 && selectionChoice >= 3);
 
                     if (select == 1) {
                         System.out.println("Please select userID to confirm friendship: ");
@@ -199,8 +210,17 @@ public class Friends {
                         prep.setTimestamp(3, new Timestamp(new java.util.Date().getTime()));
                         prep.setString(4, pendingFriends.getString(2));
                         prep.executeUpdate();
+
+                        //second direction
+                        insertSQL = "INSERT INTO friends(userID1, userID2, JDate, message) VALUES(?, ?, ?, ?)";
+                        prep = con.prepareStatement(insertSQL);
+                        prep.setString(1, pendingFriends.getString(1));
+                        prep.setString(2, userID1);
+                        prep.setTimestamp(3, new Timestamp(new java.util.Date().getTime()));
+                        prep.setString(4, pendingFriends.getString(2));
+                        prep.executeUpdate();
                         prep.close();
-                    } else {
+                    } else if (select == 2) {
                         System.out.println("Please select groupID you want to confirm for: ");
                         String gID = UserInput.getID();
 
@@ -229,7 +249,7 @@ public class Friends {
             prep.setString(1, userID1);
             prep.executeUpdate();
 
-            groupsManaged.first();
+            groupsManaged.beforeFirst();
             while(groupsManaged.next()){
                 delete = "DELETE FROM pendingGroupmembers\n"
                         + "WHERE gID = ?";
@@ -279,23 +299,25 @@ public class Friends {
             Set<String> toDisplay = new HashSet<String>();
 
             ///// 1. List the userIDs of all friends of userID1 and the friends' friends (excluding userID1)
-            ///// Make sure to remove duplicates so add all users to display into a set first
-            String selectSQL = "SELECT userID\n"
+            String selectSQL = "SELECT userID2\n"
                     + "FROM FRIENDS\n"
-                    + "WHERE userID1 = ? OR userID2 = ?\n";
+                    + "WHERE userID1 = ?\n";
             PreparedStatement prep = con.prepareStatement(selectSQL);
             prep.setString(1, userID1);
-            prep.setString(2, userID1);
+            //prep.setString(2, userID1);
             ResultSet userFriends = prep.executeQuery();
 
+            Boolean friends = false;
+
             while(userFriends.next()){
+                friends = true;
                 toDisplay.add(userFriends.getString(1));
-                selectSQL = "SELECT userID\n"
+                selectSQL = "SELECT userID2\n"
                         + "FROM FRIENDS\n"
-                        + "WHERE userID1 = ? OR userID2 = ?\n";
+                        + "WHERE userID1 = ?";
                 prep = con.prepareStatement(selectSQL);
-                prep.setString(1, userID1);
-                prep.setString(2, userID1);
+                prep.setString(1, userFriends.getString(1));
+                //prep.setString(2, userID1);
                 ResultSet friendFriends = prep.executeQuery();
 
                 while(friendFriends.next()){
@@ -307,7 +329,19 @@ public class Friends {
 
             userFriends.close();
 
+            if(!friends){
+                System.out.println("There are no profiles to display.");
+                prep.close();
+                con.close();
+                return;
+            }
+
             //create iterator to display all the choices
+            Iterator<String> it = toDisplay.iterator();
+            System.out.println("Here is a list of your friends and their friends: ");
+            while(it.hasNext()){
+                System.out.println("\t" + it.next());
+            }
 
             //// 2. Ask userID1 to input an userID
             //// if 0, return back
@@ -331,7 +365,7 @@ public class Friends {
                     ResultSet rs = prep.executeQuery();
 
                     rs.next();
-                    System.out.print("UserID: " + userID2
+                    System.out.println("UserID: " + userID2
                             + "\nName: " + rs.getString(2)
                             + "\nEmail: " + rs.getString(3)
                             + "\nDate of Birth: " + rs.getDate(4)
