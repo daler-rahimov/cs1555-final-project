@@ -2,7 +2,7 @@ drop table profile cascade constraints;
 CREATE TABLE PROFILE(
 	userID	varchar2(20),
 	name	varchar2(20) NOT NULL,
-	email	varchar2(20) NOT NULL,
+	email	varchar2(20),
 	password	varchar2(20) NOT NULL,
 	date_of_birth	date,
 	lastLogin	timestamp,
@@ -16,7 +16,8 @@ drop table groups cascade constraints;
 create table groups (
 	gID varchar2(20)
 	, name varchar2(50) not null 
-	, description varchar2(200) 
+	, description varchar2(200)
+	, gLimit number
 	, constraint pk_groups primary key (gID) deferrable initially immediate
 );
 
