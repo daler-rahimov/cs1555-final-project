@@ -110,14 +110,13 @@ public class UserInput {
         return input;
     }
 
-    public static Set<String> getSearch(String message){
+    public static String[] getSearch(String message){
         Set<String> searches = new HashSet<String>();
         Scanner scanner = new Scanner(System.in);
         System.out.print(message);
-        while(scanner.hasNext()){
-            searches.add(scanner.next());
-        }
-        return searches;
+        String line = scanner.nextLine();
+        String[] arr = line.split(" "); 
+        return arr;
     }
 
 }
