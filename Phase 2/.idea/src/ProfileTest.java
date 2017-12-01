@@ -5,9 +5,11 @@ public class ProfileTest {
         //Profile.logout("2");
         //Profile.dropUser("6");
         //Profile.createUser();
-        Profile.threeDegrees("1", "15"); //no users
-        //with users, preferably 3
-        //Profile.searchUser("4");
+        Profile.threeDegrees("43", "44"); //direct friends
+        Profile.threeDegrees("43", "47"); //2 hops
+        Profile.threeDegrees("43", "48"); //3 hops
+        Profile.threeDegrees("43", "45"); //no path
+        //Profile.searchForUser();
 
     }
 }
