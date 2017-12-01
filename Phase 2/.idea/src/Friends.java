@@ -1,3 +1,4 @@
+import javax.xml.transform.Result;
 import java.sql.*;
 import java.util.*;
 
@@ -69,21 +70,101 @@ public class Friends {
      * @param userID1
      * @param userID2
      */
-    public void confirmFriendship(int userID1){
+    public void confirmFriendship(String userID1){
         try{
             SocialPantherCon sCon = new SocialPantherCon();
             Connection con = sCon.getConnection();
 
             ///// 1. Find all friends request (where user is toUser in pending friends
-            /////   List all friends request and display message. Keep a counter for each output
+            /////   List all friends request and display message
+            String selectSQL = "SELECT fromUserID, message\n"
+                    + "FROM pendingFriends"
+                    + "WHERE toUserID = ?";
+            PreparedStatement prep = con.prepareStatement(selectSQL);
+            prep.setString(1, userID1);
+            ResultSet pendingFriends = prep.executeQuery();
+
+            System.out.println("Here are all your friend requests: ");
+            while(pendingFriends.next()){
+                System.out.println(pendingFriends.getString(1)
+                    + "\n\t" + pendingFriends.getString(2));
+            }
+
+            pendingFriends.first();
 
             //// 2. Check if user is manager of group
             ////    if yes, collect all groupRequests where the user is manager. list all requests and display messages
-            ////    continue from counter
+            selectSQL ="SELECT gID\n"
+                    + "FROM groupMembership\n"
+                    + "WHERE userID = ? AND role = 'manager'";
+            prep = con.prepareStatement(selectSQL);
+            prep.setString(1, userID1);
+            ResultSet groupsManaged = prep.executeQuery();
 
+            Set<String> members = new HashSet<String>();
+            Map<String, Set<String>> groupRequests = new HashMap<String, Set<String>>();
+
+            while(groupsManaged.next()){
+                selectSQL = "SELECT userID, message\n"
+                        + "FROM pendingGroupmembers\n"
+                        + "WHERE gID = ?";
+                prep = con.prepareStatement(selectSQL);
+                prep.setString(1, groupsManaged.getString(1));
+                ResultSet pendingGroups = prep.executeQuery();
+
+                System.out.println("Here are all your group requests for group " + groupsManaged.getString(1) + " : ");
+                while(pendingGroups.next()){
+                    members.add(pendingGroups.getString(1));
+                    System.out.println(pendingGroups.getString(1)
+                        + "\n\t" + pendingGroups.getString(2));
+                }
+                groupRequests.put(groupsManaged.getString(1), members);
+                members.clear();
+                pendingGroups.close();
+            }
+
+            int selectionChoice;
             //// 3. Ask user if they want to confirm all or select confirmations
+            do {
+                String message = "Would you like to confirm all or manually select confirmations?\n"
+                        + "Options: \n"
+                        + "\t1. Select all\n"
+                        + "\t2. Manually select\n";
+                selectionChoice = UserInput.getInt(message);
+            }while(selectionChoice != 1 || selectionChoice !=2);
 
             //// 4. If confirm all, send all requests to correct tables
+            if(selectionChoice == 1){
+                //insert all friends
+                while(pendingFriends.next()){
+                    String insertSQL = "INSERT INTO friends(userID1, userID2, JDate, message) VALUES("
+                            + userID1 + ", "
+                            + pendingFriends.getString(1) + ", "
+                            + new Timestamp(new java.util.Date().getTime()) + ", "
+                            + pendingFriends.getString(2) + ")";
+                    Statement stm = con.createStatement();
+                    stm.execute(insertSQL);
+                    stm.close();
+                }
+
+                String curGroup = null;
+
+                //insert all groupmembers
+                Iterator<String> group = groupRequests.keySet().iterator();
+                while(group.hasNext()){
+                    curGroup = group.next();
+                    members = groupRequests.get(curGroup);
+                    Iterator<String> mem = members.iterator();
+                    while(mem.hasNext()) {
+                        String insertSQl = "INSERT INTO groupMembership(gID, userID) VALUES("
+                                + curGroup + ", "
+                                + mem.next() + ")";
+                        Statement stm = con.createStatement();
+                        stm.execute(insertSQl);
+                        stm.close();
+                    }
+                }
+            }
 
             //// 5. If select, have a loop that will ask user to select the the number of confirmations
             ////    then ask user to select which requests to confirm
@@ -91,15 +172,97 @@ public class Friends {
             ////    more than initially indicated? Or just make array whatever size of input??
             ////    Remove any accepted requests
             ////    Potentially break this down for
+            else {
+                int select = 0;
+                do {
+                    String message = "Would you like to confirm a friend or group member?\n"
+                            + "Options: "
+                            + "\t1. Friend\n"
+                            + "\t2. Groupmember\n"
+                            + "\t3. Exit\n";
+                    select = 0;
+                    do {
+                        select = UserInput.getInt(message);
+                    } while (select != 1 || select != 2 || select != 3);
+
+                    if (select == 1) {
+                        message = "Please select userID to confirm friendship: ";
+                        String userID2 = UserInput.getID(message);
+
+                        //check if input is valid
+                        //look through pending friends
+
+                        String insertSQL = "INSERT INTO friends(userID1, userID2, JDate, message) VALUES("
+                                + userID1 + ", "
+                                + userID2 + ", "
+                                + new Timestamp(new java.util.Date().getTime()) + ", "
+                                + pendingFriends.getString(2) + ")";
+                        Statement stm = con.createStatement();
+                        stm.execute(insertSQL);
+                        stm.close();
+                    } else {
+                        message = "Please select groupID you want to confirm for: ";
+                        String gID = UserInput.getID(message);
+
+                        //confirm that this person is manager
+                        //look through managed groups
+
+                        message = "Please select userID of new group member: ";
+                        String userID2 = UserInput.getID(message);
+
+                        //confirm that this person has sent in a request
+                        //look through group for that grouprequests
+
+                        String insertSQl = "INSERT INTO groupMembership(gID, userID) VALUES("
+                                + gID + ", "
+                                + userID2 + ")";
+                        Statement stm = con.createStatement();
+                        stm.execute(insertSQl);
+                        stm.close();
+                    }
+                }while(select != 3);
+            }
 
             //// 6. Any requests that were not accepted are now deleted
+            String delete = "DELETE FROM pendingFriends\n"
+                    + "WHERE toID = ?";
+            prep = con.prepareStatement(delete);
+            prep.setString(1, userID1);
+            prep.executeUpdate();
+
+            groupsManaged.first();
+            while(groupsManaged.next()){
+                delete = "DELETE FROM pendingGroupmembers\n"
+                        + "WHERE gID = ?";
+                prep = con.prepareStatement(delete);
+                prep.setString(1, groupsManaged.getString(1));
+                prep.executeUpdate();
+            }
+
+            prep.close();
+            con.close();
+            groupsManaged.close();
+            pendingFriends.close();
 
         } catch (SQLException Ex){
             System.out.println("Friends >> Error: "
                 + Ex.toString());
         }
 
+        return;
     };
+
+    //make private method to get all friend request
+
+    //make private method to get all group requests
+
+    //make private method to insert friends
+
+    //make pribate method to insert groups
+
+    //make private method to delete pendingFriends
+
+    //make private method to delete pendingGroupmembers
 
     /**
      * This task supports the browsing of the user’s friends and of their friends’ profiles. It first
@@ -183,6 +346,10 @@ public class Friends {
                     rs.close();
                 } else{
                     System.out.println("This user if not accessible.");
+                    message = "Would you like to try a different user?\n"
+                            + "Options: \n"
+                            + "1: Yes\n"
+                            + "2: No \n";
                     keepLooking = UserInput.getInt(message);
                 }
             }
