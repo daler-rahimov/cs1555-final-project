@@ -62,7 +62,6 @@ public class Profile {
             Profile p = new Profile(Integer.toString(nextUserID), name, password, birthdate, new Timestamp(new java.util.Date().getTime()), email);
             p.insertToDb(con);
 
-            con.close();
             stmt.close();
             rs.close();
 
@@ -92,7 +91,6 @@ public class Profile {
             prep.setString(1, userID);
             prep.executeUpdate();
 
-            con.close();
             prep.close();
 
         } catch (SQLException Ex) {
@@ -120,10 +118,10 @@ public class Profile {
                     + "WHERE userID1 = ?";
             PreparedStatement prep = con.prepareStatement(selectSQL, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             prep.setString(1, userID1);
-            //prep.setString(2, userID1);
             ResultSet firstHop = prep.executeQuery();
 
             while(firstHop.next()){
+                //System.out.println(firstHop.getString(1));
                 if(firstHop.getString(1).equals(userID2)) {
                     threeDegreesPath.add(userID2);
                     pathFound = true;
@@ -138,7 +136,6 @@ public class Profile {
                     System.out.println("\t" + it.next());
                 }
 
-                con.close();
                 prep.close();
                 firstHop.close();
                 return;
@@ -146,7 +143,7 @@ public class Profile {
 
             ///// 3. Go through all of userID1 friends' friends list (hop 2) for userID2
             //return cursor back to first pointer
-            firstHop.first();
+            firstHop.beforeFirst();
             Map<String, String> secondSet = new HashMap<String, String>();
 
             while(firstHop.next()) {
@@ -156,11 +153,10 @@ public class Profile {
                         + "WHERE userID1 = ?";
                 prep = con.prepareStatement(selectSQL);
                 prep.setString(1, userID3);
-                //prep.setString(2, userID3);
                 ResultSet secondHop = prep.executeQuery();
 
                 while (secondHop.next()) {
-                    if (firstHop.getString(1).equals(userID2)) {
+                    if (secondHop.getString(1).equals(userID2)) {
                         threeDegreesPath.add(userID3);
                         threeDegreesPath.add(userID2);
                         pathFound = true;
@@ -179,7 +175,6 @@ public class Profile {
                     System.out.println("\t" + it.next());
                 }
 
-                con.close();
                 prep.close();
                 firstHop.close();
                 return;
@@ -194,7 +189,6 @@ public class Profile {
                         + "WHERE userID1 = ?";
                 prep = con.prepareStatement(selectSQL);
                 prep.setString(1, userID3);
-                //prep.setString(2, userID3);
                 ResultSet thirdHop = prep.executeQuery();
 
                 while (thirdHop.next()) {
@@ -207,7 +201,6 @@ public class Profile {
                 thirdHop.close();
             }
 
-            con.close();
             prep.close();
             firstHop.close();
 
@@ -310,7 +303,6 @@ public class Profile {
                 return false;
             }
 
-            con.close();
             prep.close();
             rs.close();
         } catch (SQLException Ex) {
