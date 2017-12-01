@@ -79,18 +79,64 @@ public class Profile {
      * Attention should be paid handling integrity constraints.
      *
      */
-    public static void dropUser(String userID) {
+     public static void dropUser(String userID) {
         try {
+
             ///// 1. Connect to database
             SocialPantherCon sCon = new SocialPantherCon();
             Connection con = sCon.getConnection();
 
             ///// 2. Activate trigger by deleting profile
-            String delete = "DELETE FROM profile WHERE userid = ?";
+            String delete = "delete from friends where userID1 = ? or userID2 = ?";
             PreparedStatement prep = con.prepareStatement(delete);
+            prep.setString(1, userID);
+            prep.setString(2, userID);
+            prep.executeUpdate();
+//            System.out.println("all deleted. ");
+
+            delete = "delete from pendingGroupmembers where userID = ?";
+            prep = con.prepareStatement(delete);
+            prep.setString(1, userID);
+            prep.executeUpdate();
+//            System.out.println("all deleted. ");
+
+            delete = "delete from pendingFriends where fromID = ? or toID = ?";
+            prep = con.prepareStatement(delete);
+            prep.setString(1, userID);
+            prep.setString(2, userID);
+            prep.executeUpdate();
+//            System.out.println("all deleted. ");
+
+            delete = "delete from groupMembership where userID = ?";
+            prep = con.prepareStatement(delete);
+            prep.setString(1, userID);
+            prep.executeUpdate();
+//            System.out.println("all deleted. ");
+
+            delete = "delete from messageRecipient where msgID IN (\n"
+                    + "    select msgID from messages where  (fromID = ?) or (toUserID = ? )\n"
+                    + "    )";
+            prep = con.prepareStatement(delete);
+            prep.setString(1, userID);
+            prep.setString(2, userID);
+            prep.executeUpdate();
+//            System.out.println("all deleted. ");
+
+            delete = "delete from messages where (fromID = ? and toUserID = null) or (toUserID = ? and fromID = null)";
+            prep = con.prepareStatement(delete);
+            prep.setString(1, userID);
+            prep.setString(2, userID);
+            prep.executeUpdate();
+//            System.out.println("all deleted. ");
+
+            delete = "DELETE FROM profile WHERE userid = ?";
+            prep = con.prepareStatement(delete);
             prep.setString(1, userID);
             prep.executeUpdate();
 
+            System.out.println("User and all data related is deleted. ");
+
+            con.close();
             prep.close();
 
         } catch (SQLException Ex) {

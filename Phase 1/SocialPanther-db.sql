@@ -133,7 +133,7 @@ Consideration:
 		1.6 Table messageRecipient -> all deleted 
 */
 
-
+/*
 create or replace trigger dropUser
         before delete on profile
         for each row
@@ -146,7 +146,7 @@ create or replace trigger dropUser
 				/*1.6*/delete from messageRecipient where userID = :new.userID;
         end;
 /
-
+*/
 
 -------------send msg user trigger------------------
 /*
