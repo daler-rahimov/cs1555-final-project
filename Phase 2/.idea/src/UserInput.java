@@ -27,7 +27,7 @@ public class UserInput {
         return scanner.nextInt();
     }
 
-    public static String getID() {
+    public static String getID(String message) {
         String userID;
         Scanner scanner = new Scanner(System.in);
         int size;
