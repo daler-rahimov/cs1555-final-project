@@ -115,12 +115,12 @@ public class Profile {
             Boolean pathFound = false;
 
             ///// 2. Look through userID1 friends list (hop 1) for userID2
-            String selectSQL = "SELECT userID\n"
+            String selectSQL = "SELECT userID2\n"
                     + "FROM friends\n"
-                    + "WHERE userID1 = ? OR userID2 = ?";
-            PreparedStatement prep = con.prepareStatement(selectSQL);
+                    + "WHERE userID1 = ?";
+            PreparedStatement prep = con.prepareStatement(selectSQL, ResultSet.TYPE_SCROLL_INSENSITIVE);
             prep.setString(1, userID1);
-            prep.setString(2, userID1);
+            //prep.setString(2, userID1);
             ResultSet firstHop = prep.executeQuery();
 
             while(firstHop.next()){
@@ -151,12 +151,12 @@ public class Profile {
 
             while(firstHop.next()) {
                 String userID3 = firstHop.getString(1);
-                selectSQL = "SELECT userID\n"
+                selectSQL = "SELECT userID2\n"
                         + "FROM friends\n"
-                        + "WHERE userID1 = ? OR userID2 = ?";
+                        + "WHERE userID1 = ?";
                 prep = con.prepareStatement(selectSQL);
                 prep.setString(1, userID3);
-                prep.setString(2, userID3);
+                //prep.setString(2, userID3);
                 ResultSet secondHop = prep.executeQuery();
 
                 while (secondHop.next()) {
@@ -189,12 +189,12 @@ public class Profile {
             Iterator<String> it = secondSet.keySet().iterator();
             while(it.hasNext()){
                 String userID3 = it.next();
-                selectSQL = "SELECT userID\n"
+                selectSQL = "SELECT userID2\n"
                         + "FROM friends\n"
-                        + "WHERE userID1 = ? OR userID2 = ?";
+                        + "WHERE userID1 = ?";
                 prep = con.prepareStatement(selectSQL);
                 prep.setString(1, userID3);
-                prep.setString(2, userID3);
+                //prep.setString(2, userID3);
                 ResultSet thirdHop = prep.executeQuery();
 
                 while (thirdHop.next()) {
