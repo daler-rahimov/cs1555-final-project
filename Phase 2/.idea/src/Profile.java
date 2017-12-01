@@ -118,7 +118,7 @@ public class Profile {
             String selectSQL = "SELECT userID2\n"
                     + "FROM friends\n"
                     + "WHERE userID1 = ?";
-            PreparedStatement prep = con.prepareStatement(selectSQL, ResultSet.TYPE_SCROLL_INSENSITIVE);
+            PreparedStatement prep = con.prepareStatement(selectSQL, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             prep.setString(1, userID1);
             //prep.setString(2, userID1);
             ResultSet firstHop = prep.executeQuery();
@@ -242,15 +242,14 @@ public class Profile {
 
             ///// 2. Get string and parse string for each keyword added to search
             String message = "Please type search keywords: ";
-            Set<String> searches = new HashSet<String>();
-            searches = UserInput.getSearch(message);
+            String[] searches = UserInput.getSearch(message);
 
             ///// 3. Perform search in userID, name, and email for each keyword
             Set<Profile> matches = new HashSet<Profile>();
-            Iterator<String> it = searches.iterator();
             String check;
-            while(it.hasNext()){
-                check = it.next();
+
+            for(int i = 0; i < searches.length; i++){
+                check = searches[i];
                 String selectSQL = "SELECT userID, name\n"
                         + "FROM profile\n"
                         + "WHERE userID LIKE ? OR name LIKE ? OR email LIKE ?";
