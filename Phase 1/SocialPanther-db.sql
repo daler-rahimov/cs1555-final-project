@@ -133,20 +133,6 @@ Consideration:
 		1.6 Table messageRecipient -> all deleted 
 */
 
-/*
-create or replace trigger dropUser
-        before delete on profile
-        for each row
-        begin
-                /*1.1*/delete from friends where userID1 = :new.userID or userID2 = :new.userID;
-				/*1.2*/delete from pendingGroupmembers where userID = :new.userID;
-				/*1.3*/delete from pendingFriends where fromID = :new.userID or toID = :new.userID;
-				/*1.4*/delete from groupMembership where userID = :new.userID;
-				/*1.5*/delete from messages where (fromID = :new.userID and toUserID = null) or (toUserID = :new.userID and fromID = null);
-				/*1.6*/delete from messageRecipient where userID = :new.userID;
-        end;
-/
-*/
 
 -------------send msg user trigger------------------
 /*
