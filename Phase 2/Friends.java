@@ -198,52 +198,83 @@ public class Friends {
                             + "\t1. Friend\n"
                             + "\t2. Groupmember\n"
                             + "\t3. Exit\n";
-                    select = 0;
                     do {
                         select = UserInput.getInt(message);
-                    } while (selectionChoice <= 1 && selectionChoice >= 3);
+                    } while (select <= 1 && select >= 3);
 
                     if (select == 1) {
                         System.out.println("Please select userID to confirm friendship: ");
                         String userID2 = UserInput.getID();
 
                         //check if input is valid
-                        //look through pending friends
-                        String insertSQL = "INSERT INTO friends(userID1, userID2, JDate, message) VALUES(?, ?, ?, ?)";
-                        prep = con.prepareStatement(insertSQL);
-                        prep.setString(1, userID1);
-                        prep.setString(2, userID2);
-                        prep.setTimestamp(3, new Timestamp(new java.util.Date().getTime()));
-                        prep.setString(4, pendingFriends.getString(2));
-                        prep.executeUpdate();
+                        Boolean canAdd = false;
+                        pendingFriends.beforeFirst();
+                        while(pendingFriends.next()){
+                            if(pendingFriends.getString(1).equals(userID2))
+                                canAdd = true;
+                        }
 
-                        //second direction
-                        insertSQL = "INSERT INTO friends(userID1, userID2, JDate, message) VALUES(?, ?, ?, ?)";
-                        prep = con.prepareStatement(insertSQL);
-                        prep.setString(1, pendingFriends.getString(1));
-                        prep.setString(2, userID1);
-                        prep.setTimestamp(3, new Timestamp(new java.util.Date().getTime()));
-                        prep.setString(4, pendingFriends.getString(2));
-                        prep.executeUpdate();
-                        prep.close();
+                        if (canAdd) {
+                            //look through pending friends
+                            String insertSQL = "INSERT INTO friends(userID1, userID2, JDate, message) VALUES(?, ?, ?, ?)";
+                            prep = con.prepareStatement(insertSQL);
+                            prep.setString(1, userID1);
+                            prep.setString(2, userID2);
+                            prep.setTimestamp(3, new Timestamp(new java.util.Date().getTime()));
+                            prep.setString(4, pendingFriends.getString(2));
+                            prep.executeUpdate();
+
+                            //second direction
+                            insertSQL = "INSERT INTO friends(userID1, userID2, JDate, message) VALUES(?, ?, ?, ?)";
+                            prep = con.prepareStatement(insertSQL);
+                            prep.setString(1, pendingFriends.getString(1));
+                            prep.setString(2, userID1);
+                            prep.setTimestamp(3, new Timestamp(new java.util.Date().getTime()));
+                            prep.setString(4, pendingFriends.getString(2));
+                            prep.executeUpdate();
+                            prep.close();
+                        } else {
+                            System.out.println("Not a valid userID. Please select again.");
+                        }
                     } else if (select == 2) {
                         System.out.println("Please select groupID you want to confirm for: ");
                         String gID = UserInput.getID();
 
                         //confirm that this person is manager
                         //look through managed groups
+                        Boolean isManager = false;
+                        groupsManaged.beforeFirst();
+                        while(groupsManaged.next()){
+                            if(groupsManaged.getString(1).equals(gID))
+                                isManager = true;
+                        }
 
-                        System.out.println("Please select userID of new group member: ");
-                        String userID2 = UserInput.getID();
+                        if(isManager) {
+                            System.out.println("Please select userID of new group member: ");
+                            String userID2 = UserInput.getID();
 
-                        //confirm that this person has sent in a request
-                        //look through group for that grouprequests
-                        String insertSQl = "INSERT INTO groupMembership(gID, userID) VALUES(?, ?)";
-                        prep = con.prepareStatement(insertSQl);
-                        prep.setString(1, gID);
-                        prep.setString(2, userID2);
-                        prep.executeUpdate();
-                        prep.close();
+                            //confirm that this person has sent in a request
+                            //look through group for that grouprequests
+                            Boolean didRequest = false;
+                            Iterator<String> it = members.iterator();
+                            while(it.hasNext()){
+                                if(it.next().equals(userID2))
+                                    didRequest = true;
+                            }
+
+                            if(didRequest) {
+                                String insertSQl = "INSERT INTO groupMembership(gID, userID) VALUES(?, ?)";
+                                prep = con.prepareStatement(insertSQl);
+                                prep.setString(1, gID);
+                                prep.setString(2, userID2);
+                                prep.executeUpdate();
+                                prep.close();
+                            } else {
+                                System.out.println("This person did not request to join the group.");
+                            }
+                        } else {
+                            System.out.println("You are not a manager of this group. Please select another group.");
+                        }
                     }
                 }while(select != 3);
             }
@@ -276,18 +307,6 @@ public class Friends {
 
         return;
     }
-
-    //make private method to get all friend request
-
-    //make private method to get all group requests
-
-    //make private method to insert friends
-
-    //make pribate method to insert groups
-
-    //make private method to delete pendingFriends
-
-    //make private method to delete pendingGroupmembers
 
     /**
      * This task supports the browsing of the user’s friends and of their friends’ profiles. It first
