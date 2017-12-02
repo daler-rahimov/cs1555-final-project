@@ -1,38 +1,8 @@
 Things to add/do:
 	1. people can only message groups they are in
-
-	2. friendship duplicates (ie username in backwards)
 	
-	3. Add emails to profile
-		Current state: allows for null in table, fix once we generate email data
+	2. Break confirmFriendships into smaller methods
 	
-	4. Add group limits to groups
-
-	5. for any getID, prompt before
+	3. Add to ReadMe that friendShips are shown both ways for simplification purposes
 	
-	6. Break confirmFriendships into smaller methods (Maya)
-	
-	7. Prompt instead of passing
-	
-	8. Add to ReadMe that friendShips are shown both ways for simplification purposes
-	
-	9. Fix current friends Table to show the friendships of all going to opposite way
-	
-	
-Status of Methods:
-	Friends:
-		displayFriends (Working)
-		confirmFriendship (need to add data to play with)
-		initiateFriendship (need to add data to play with)
-		
-	Profile:
-		login	(Working)
-		logout	(Working)
-		createUser	(Working)
-		dropUser (trigger issue)
-		threeDegrees (not yet)
-		searchForUser (infinite loop?? or just really slow??)
-		
-	Groups:
-	
-	Messages:
+	4. Fix current friends Table to show the friendships of all going to opposite way
