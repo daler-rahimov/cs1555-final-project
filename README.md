@@ -34,7 +34,7 @@ Here is how the methods provided in the specification is been divided into class
 	 - initiateAddingGroup(String userID)
 
 ## Phase 3 Instruction:
-The automated test class in MainTest.java all the inputs are hardcoded into the source code. All test output will be writen to stdout. To Run 
+The automated test class is in MainTest.java all the inputs are hardcoded into the source code. All test output will be writen to stdout. To Run 
    - javac MainTest.java
    - java MainTest
 
