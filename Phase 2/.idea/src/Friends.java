@@ -12,7 +12,6 @@ public class Friends {
      and success or failure feedback is displayed for the user.
      *
      * @param userID1
-     * @param userID2
      */
     public static Boolean initiateFriendship(String userID1){
         //make user input here
