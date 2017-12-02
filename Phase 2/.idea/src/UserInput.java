@@ -115,7 +115,7 @@ public class UserInput {
         Scanner scanner = new Scanner(System.in);
         System.out.print(message);
         String line = scanner.nextLine();
-        String[] arr = line.split(" "); 
+        String[] arr = line.split(" ");
         return arr;
     }
 

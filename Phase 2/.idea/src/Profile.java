@@ -1,4 +1,3 @@
-
 import static java.lang.System.exit;
 import java.sql.*;
 import java.text.ParseException;
@@ -79,14 +78,14 @@ public class Profile {
      * Attention should be paid handling integrity constraints.
      *
      */
-     public static void dropUser(String userID) {
+    public static void dropUser(String userID) {
         try {
 
             ///// 1. Connect to database
             SocialPantherCon sCon = new SocialPantherCon();
             Connection con = sCon.getConnection();
 
-            ///// 2. Activate trigger by deleting profile
+            ///// 2. Delete
             String delete = "delete from friends where userID1 = ? or userID2 = ?";
             PreparedStatement prep = con.prepareStatement(delete);
             prep.setString(1, userID);
@@ -149,7 +148,15 @@ public class Profile {
      * with at most 3 hop between them. A hop is defined as a friendship between
      * any two users
      */
-    public static void threeDegrees(String userID1, String userID2) {
+    public static void threeDegrees() {
+        String userID1, userID2;
+
+        System.out.print("Please enter first ID: ");
+        userID1 = UserInput.getID();
+
+        System.out.print("Please enter second ID: ");
+        userID2 = UserInput.getID();
+
         LinkedHashSet<String> threeDegreesPath = new LinkedHashSet<String>();
         try{
             ///// 1. Connect to database
@@ -323,7 +330,15 @@ public class Profile {
      * Given userID and password, login as the user in the system when an
      * appropriate match is found.
      */
-    public static Boolean login(String userID, String password) {
+    public static Boolean login() {
+        String userID, password;
+
+        System.out.print("Please enter your userID: ");
+        userID = UserInput.getID();
+
+        String message = "Please enter your passord: ";
+        password = UserInput.getLine20(message);
+
         Boolean loggedIn = false;
         try{
             ///// 1. Connect to database

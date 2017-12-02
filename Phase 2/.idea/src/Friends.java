@@ -14,8 +14,15 @@ public class Friends {
      * @param userID1
      * @param userID2
      */
-    public static Boolean initiateFriendship(String userID1, String userID2, String message){
+    public static Boolean initiateFriendship(String userID1){
         //make user input here
+        String userID2, message;
+
+        System.out.print("Please enter the ID of the user you would like to befriend: ");
+        userID2 = UserInput.getID();
+
+        String inputMessage = "Please enter a message you would like to send to this user: ";
+        message = UserInput.getLine200(inputMessage);
 
         try {
             ///// 1. Connect to database
