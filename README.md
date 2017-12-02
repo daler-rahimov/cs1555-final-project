@@ -8,8 +8,8 @@ In order to get a database with all requirements for phase 1 do the following in
   - SQL>start AllInserts.sql
   
 ## Phase 2 Instruction
-Here is how the methods provided in the specification is been divided into class (each class has corresponding test classes): 
-  - Profile:
+Here is how the methods provided in the specification is been divided into classes (each class has corresponding test class): 
+  - Profile: (to run: javac ProfileTest.java; java ProfileTest) 
      - dropUser(String userID)
 	 - threeDegress()
      - searchUser()
@@ -17,19 +17,19 @@ Here is how the methods provided in the specification is been divided into class
      - logout(String userID)
 	 - createUser()
 	 
-  - Messages:
+  - Message: (to run: javac MessageTest.java; java MessageTest)
      - sendMessageToUser (String userID)
 	 - sendMessageToGroup (String userID)
 	 - displayMessages (String userID)
 	 - displayNewMessages (String userID)
 	 - topMessages()
   
-  - Friends:
+  - Friend: (to run: javac Friend.java; java Friend)
      - initiateFriedship(String userID)
      - confirmFriedship(String userID)	
      - displayFrieds(String userID)
 
-  - Group:
+  - Group: (to run: javac Group.java; java Group)
      - createGroup(String userID)
 	 - initiateAddingGroup(String userID)
 
