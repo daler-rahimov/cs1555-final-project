@@ -12,6 +12,7 @@ import java.util.List;
 
 public class Message {
 
+    public static boolean isTest = false;
     private String msgID;
     private String fromID;
     private String message;
@@ -75,8 +76,13 @@ public class Message {
             ////////////////////////////////////////////////////////////////////
             boolean isInFriendList = false;
             Profile toUser = null;
+            String toUserID;
             do {
-                String toUserID = UserInput.getID();
+                if (!isTest) {
+                    toUserID = UserInput.getID();
+                } else {
+                    toUserID = "100";//100 is fried with 1
+                }
                 //validate
                 for (int i = 0; i < allFriendsprofiles.size(); i++) {
                     if (toUserID.equals(allFriendsprofiles.get(i).getUserID())) {
@@ -93,8 +99,13 @@ public class Message {
             ///////////// 3. show the name and and getMessageText///////////////
             ////////////////////////////////////////////////////////////////////
             System.out.println("For user =>" + toUser.getName());
-            String msgStr = UserInput.getMessage();
-//            System.out.println("msgStr = " + msgStr);
+            String msgStr;
+            if (!isTest) {
+                msgStr = UserInput.getMessage();
+            } else {
+                msgStr = "Test message to user";
+            }
+            //            System.out.println("msgStr = " + msgStr);
             ////////////////////////////////////////////////////////////////////
 
             /////////////// 4. send message to the user db insert///////////////
@@ -115,6 +126,7 @@ public class Message {
                 System.out.println("Failed to send a message DB errer");
             }
             ////////////////////////////////////////////////////////////////////
+//            con.close();
             stmt.close();
             rs.close();
         } catch (SQLException Ex) {
@@ -177,7 +189,13 @@ public class Message {
             boolean isInGroupList = false;
             Group toGroup = null;
             do {
-                String toGroupID = UserInput.getID();
+                String toGroupID;
+                if (!isTest) {
+                    toGroupID = UserInput.getID();
+                } else {
+                    toGroupID = "1";
+                }
+
                 //validate
                 for (int i = 0; i < allGroups.size(); i++) {
                     if (toGroupID.equals(allGroups.get(i).getgID())) {
@@ -194,7 +212,13 @@ public class Message {
             //////// 3.  Get message multilined. Show the name of the group///
             ////////////////////////////////////////////////////////////////////
             System.out.println("For group =>" + toGroup.getName());
-            String msgStr = UserInput.getMessage();
+            String msgStr;
+
+            if (!isTest) {
+                msgStr = UserInput.getMessage();
+            } else {
+                msgStr = "This is for automated testing message.";
+            }
 //            System.out.println("msgStr = " + msgStr);
             ////////////////////////////////////////////////////////////////////
 
@@ -216,6 +240,7 @@ public class Message {
                 System.out.println("Failed to send a message DB errer");
             }
             ////////////////////////////////////////////////////////////////////
+//            con.close();
             stmt.close();
             rs.close();
         } catch (SQLException Ex) {
@@ -327,10 +352,20 @@ public class Message {
         // 3. count number of sent + received messages for each user for past X months
         // 4. get top K of those users and display them
         // 1. get top K
-        int topK = UserInput.getInt("Enter Top K values >");
+        int topK;
+        if (!isTest) {
+            topK = UserInput.getInt("Enter Top K values >");
+        }else{
+            topK = 10; 
+        }
         // 2. get past X months
-        int pastXMonths = UserInput.getInt("Enter past X months >");
-
+        int pastXMonths ;
+        if (!isTest){
+            pastXMonths = UserInput.getInt("Enter past X months >");
+        }else{
+            pastXMonths = 10;
+        }
+        
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MONTH, -(pastXMonths));
         java.util.Date curreSubDate = cal.getTime();

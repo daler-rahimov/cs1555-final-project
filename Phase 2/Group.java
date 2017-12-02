@@ -11,6 +11,7 @@ import java.util.List;
 
 public class Group {
 
+    public static boolean isTest = false;
     /**
      * 6. createGroup Given a name, description, and membership limit, add a new
      * group to the system, add the user as its first member with the role
@@ -25,10 +26,30 @@ public class Group {
         // 4. add new group
         // 5. make current user a member with manager priviligoues
 
-        String groupName = UserInput.getLine20("Enter a group name ");
-        String discription = UserInput.getLine200("Enter group description");
-        int gLimit = UserInput.getInt("Enter group limit > ");
+        String groupName;
+        if(!isTest){
+            groupName = UserInput.getLine20("Enter a group name ");
+        }else{
+            groupName = "AutoTest";
+        }
+        
+        String discription ;
+        if (!isTest){
+            discription = UserInput.getLine200("Enter group description");
+        }else{
+            discription = "This is from auto Test";
+        }
+        
+        
+        int gLimit ;
+        if(!isTest){
+            gLimit = UserInput.getInt("Enter group limit > ");
+        }else{
+            gLimit = 100;
+        }
 
+        
+        
         try {
             SocialPantherCon sCon = new SocialPantherCon();
             Connection con = sCon.getConnection();
@@ -152,9 +173,18 @@ public class Group {
             System.out.println("-------------------------------------------");
 
             // 2. Get gID
-            int gID = UserInput.getInt("Enter a group you want to sign up for >");
-            String message = UserInput.getLine200("Enter you message for the group ");
-
+            int gID;
+            if(!isTest){
+                gID = UserInput.getInt("Enter a group you want to sign up for >");
+            }else{
+                gID = 1;
+            }
+            String message;
+            if(!isTest){
+                message = UserInput.getLine200("Enter you message for the group ");
+            }else{
+                message = "This is from Auto Test MainTest";
+            }
             // 3. Check if gtoupmember + group Requests not > limit
             selectSQL = "select count(*) as count\n"
                     + "from groupmembership gm\n"
