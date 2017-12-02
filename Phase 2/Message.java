@@ -115,7 +115,6 @@ public class Message {
                 System.out.println("Failed to send a message DB errer");
             }
             ////////////////////////////////////////////////////////////////////
-            con.close();
             stmt.close();
             rs.close();
         } catch (SQLException Ex) {
@@ -217,7 +216,6 @@ public class Message {
                 System.out.println("Failed to send a message DB errer");
             }
             ////////////////////////////////////////////////////////////////////
-            con.close();
             stmt.close();
             rs.close();
         } catch (SQLException Ex) {

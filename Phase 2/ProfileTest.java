@@ -1,7 +1,7 @@
 public class ProfileTest {
     public static void main(String args[]){
-        System.out.print(Profile.login()); //returns false, "1", "TMA58U6JG"
-        System.out.print(Profile.login()); //returns true, "1", "TMA58URO6JG"
+        System.out.println(Profile.login()); //returns false, "1", "TMA58U6JG"
+        System.out.println(Profile.login()); //returns true, "1", "TMA58URO6JG"
         Profile.logout("2");
         Profile.dropUser("10");
         Profile.createUser();
