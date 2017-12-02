@@ -4,6 +4,9 @@ import java.util.*;
 
 public class Friends {
 
+    public static boolean isTest = false;
+    public static boolean isTest2 = false;
+
     /**
      * Create a pending friendship from the (logged in) user to another user based on userID. The
      application should display the name of the person that will be sent a friends request and the user
@@ -17,11 +20,17 @@ public class Friends {
         //make user input here
         String userID2, message;
 
-        System.out.print("Please enter the ID of the user you would like to befriend: ");
-        userID2 = UserInput.getID();
+        if(!isTest) {
 
-        String inputMessage = "Please enter a message you would like to send to this user: ";
-        message = UserInput.getLine200(inputMessage);
+            System.out.print("Please enter the ID of the user you would like to befriend: ");
+            userID2 = UserInput.getID();
+
+            String inputMessage = "Please enter a message you would like to send to this user: ";
+            message = UserInput.getLine200(inputMessage);
+        } else {
+            userID2 = "15";
+            message = "isTest initiateFriendship message";
+        }
 
         try {
             ///// 1. Connect to database
@@ -138,7 +147,14 @@ public class Friends {
                         + "\t1. Select all\n"
                         + "\t2. Manually select\n"
                         + "\t3. Delete all requests\n";
-                selectionChoice = UserInput.getInt(message);
+                if(!isTest && !isTest2){
+                    selectionChoice = UserInput.getInt(message);
+                } else if (isTest){
+                    selectionChoice = 1;
+                } else {
+                    selectionChoice = 2;
+                }
+
             }while(selectionChoice <= 1 && selectionChoice >= 3);
 
             //// 4. If confirm all, send all requests to correct tables
@@ -191,6 +207,7 @@ public class Friends {
             ////    Remove any accepted requests
             ////    Potentially break this down for
             else if(selectionChoice == 2) {
+                int count = 0;
                 int select = 0;
                 do {
                     String message = "Would you like to confirm a friend or group member?\n"
@@ -199,7 +216,15 @@ public class Friends {
                             + "\t2. Groupmember\n"
                             + "\t3. Exit\n";
                     do {
-                        select = UserInput.getInt(message);
+                        if(!isTest && !isTest2) {
+                            select = UserInput.getInt(message);
+                        } else if(count > 1){
+                            select = 3;
+                        }
+                        else {
+                            count++;
+                            select = 2;
+                        }
                     } while (select <= 1 && select >= 3);
 
                     if (select == 1) {
@@ -238,7 +263,13 @@ public class Friends {
                         }
                     } else if (select == 2) {
                         System.out.println("Please select groupID you want to confirm for: ");
-                        String gID = UserInput.getID();
+                        String gID;
+                        if(!isTest && !isTest2){
+                            gID = UserInput.getID();
+                        } else {
+                            gID = "9";
+                        }
+
 
                         //confirm that this person is manager
                         //look through managed groups
@@ -251,7 +282,12 @@ public class Friends {
 
                         if(isManager) {
                             System.out.println("Please select userID of new group member: ");
-                            String userID2 = UserInput.getID();
+                            String userID2;
+                            if(!isTest && !isTest2) {
+                                userID2 = UserInput.getID();
+                            } else {
+                                userID2 = "99";
+                            }
 
                             //confirm that this person has sent in a request
                             //look through group for that grouprequests
@@ -376,11 +412,22 @@ public class Friends {
                     + "Options: \n"
                     + "1: Yes\n"
                     + "2: No \n";
-            int keepLooking = UserInput.getInt(message);
+            int keepLooking;
+            if(!isTest) {
+                keepLooking = UserInput.getInt(message);
+            } else {
+                keepLooking = 1;
+            }
 
             while(keepLooking == 1) {
                 System.out.println("Please enter the ID of the user you want to look at: ");
-                String userID2 = UserInput.getID();
+
+                String userID2;
+                if(!isTest) {
+                    userID2 = UserInput.getID();
+                } else {
+                    userID2 = "94";
+                }
                 if(toDisplay.contains(userID2)){
                     selectSQL = "SELECT userID, name, email, date_of_birth, lastLogin\n"
                             + "FROM PROFILE\n"
@@ -400,7 +447,11 @@ public class Friends {
                             + "Options: \n"
                             + "\t1: Yes\n"
                             + "\t2: No \n";
-                    keepLooking = UserInput.getInt(message);
+                    if(!isTest) {
+                        keepLooking = UserInput.getInt(message);
+                    } else{
+                        keepLooking = 2;
+                    }
 
                     rs.close();
                 } else{
@@ -409,7 +460,11 @@ public class Friends {
                             + "Options: \n"
                             + "1: Yes\n"
                             + "2: No \n";
-                    keepLooking = UserInput.getInt(message);
+                    if(!isTest) {
+                        keepLooking = UserInput.getInt(message);
+                    } else {
+                        keepLooking = 2;
+                    }
                 }
             }
 

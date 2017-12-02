@@ -9,6 +9,7 @@ import java.util.*;
 public class Profile {
 
     public static final DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");// use java.sql classes instead
+    public static boolean isTest = false;
 
     /**
      * Given a name, email address, and date of birth, add a new user to the
@@ -18,15 +19,26 @@ public class Profile {
         //requirements for creating a profile
         //userID will be created by finding the next available number for the ID
         //last login will be added at this time
+        String name, email, date, password;
 
-        System.out.println("Please enter your name: ");
-        String name = UserInput.getID();
+        if(!isTest) {
+            System.out.println("Please enter your name: ");
+            name = UserInput.getID();
 
-        System.out.println("Please enter your email: ");
-        String email = UserInput.getID();
+            System.out.println("Please enter your email: ");
+            email = UserInput.getID();
 
-        System.out.println("Please enter your birthday (dd-mm-yyyy): ");
-        String date = UserInput.getID();
+            System.out.println("Please enter your birthday (dd-mm-yyyy): ");
+            date = UserInput.getID();
+
+            System.out.println("Please enter a password: ");
+            password = UserInput.getID();
+        } else {
+            name = "Gabby";
+            email = "Gabby@pitt.edu";
+            date = "12-09-1982";
+            password = "KJGD896JK";
+        }
 
         java.util.Date utilDate = null;
         try{
@@ -36,9 +48,6 @@ public class Profile {
         }
 
         java.sql.Date birthdate = new java.sql.Date(utilDate.getTime());
-
-        System.out.println("Please enter a password: ");
-        String password = UserInput.getID();
 
         try {
             ////// 1. Connect to database
@@ -150,11 +159,18 @@ public class Profile {
     public static void threeDegrees() {
         String userID1, userID2;
 
-        System.out.print("Please enter first ID: ");
-        userID1 = UserInput.getID();
 
-        System.out.print("Please enter second ID: ");
-        userID2 = UserInput.getID();
+        //potentially add multiple flags to show that each type of path works
+        if(!isTest) {
+            System.out.print("Please enter first ID: ");
+            userID1 = UserInput.getID();
+
+            System.out.print("Please enter second ID: ");
+            userID2 = UserInput.getID();
+        } else {
+            userID1 = "43";
+            userID2 = "48";
+        }
 
         LinkedHashSet<String> threeDegreesPath = new LinkedHashSet<String>();
         try{
@@ -286,8 +302,15 @@ public class Profile {
             Connection con = sCon.getConnection();
 
             ///// 2. Get string and parse string for each keyword added to search
-            String message = "Please type search keywords: ";
-            String[] searches = UserInput.getSearch(message);
+
+            String[] searches;
+
+            if(!isTest) {
+                String message = "Please type search keywords: ";
+                searches = UserInput.getSearch(message);
+            } else {
+                searches = new String[] {"12", "Bob", "Gabby"};
+            }
 
             ///// 3. Perform search in userID, name, and email for each keyword
             Set<Profile> matches = new HashSet<Profile>();
@@ -332,11 +355,16 @@ public class Profile {
     public static Boolean login() {
         String userID, password;
 
-        System.out.print("Please enter your userID: ");
-        userID = UserInput.getID();
+        if(!isTest) {
+            System.out.print("Please enter your userID: ");
+            userID = UserInput.getID();
 
-        String message = "Please enter your passord: ";
-        password = UserInput.getLine20(message);
+            String message = "Please enter your passord: ";
+            password = UserInput.getLine20(message);
+        } else {
+            userID = "1";
+            password = "TMA58URO6JG";
+        }
 
         Boolean loggedIn = false;
         try{
