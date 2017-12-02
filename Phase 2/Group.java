@@ -66,7 +66,6 @@ public class Group {
             preparedStatement.setString(2, userID);
             preparedStatement.executeQuery();
             ////////////////////////////////////////////////////////////////////
-            con.close();
             stmt.close();
             rs.close();
         } catch (SQLException Ex) {

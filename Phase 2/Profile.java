@@ -135,7 +135,6 @@ public class Profile {
 
             System.out.println("User and all data related is deleted. ");
 
-            con.close();
             prep.close();
 
         } catch (SQLException Ex) {
