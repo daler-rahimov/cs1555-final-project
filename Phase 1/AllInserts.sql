@@ -168,6 +168,8 @@ INSERT INTO groupMembership (gID, userID) VALUES (10, 17);
 
 --------------------200 Frieds -----------------------------------
 INSERT INTO friends (userID1,userID2,JDate) VALUES (43,44,'22-Jun-17');
+INSERT INTO friends (userID1,userID2,JDate) VALUES (44,47,'22-Jun-17');
+INSERT INTO friends (userID1,userID2,JDate) VALUES (47,48,'22-Jun-17');
 INSERT INTO friends (userID1,userID2,JDate) VALUES (25,31,'16-Nov-16');
 INSERT INTO friends (userID1,userID2,JDate) VALUES (7,94,'24-Jul-17');
 INSERT INTO friends (userID1,userID2,JDate) VALUES (25,11,'01-May-17');
