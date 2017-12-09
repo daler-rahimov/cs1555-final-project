@@ -93,6 +93,7 @@ public class Profile {
             ///// 1. Connect to database
             SocialPantherCon sCon = new SocialPantherCon();
             Connection con = sCon.getConnection();
+            con.setAutoCommit(false);
 
             ///// 2. Delete
             String delete = "delete from friends where userID1 = ? or userID2 = ?";
