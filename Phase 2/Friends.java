@@ -63,12 +63,13 @@ public class Friends {
             prep.setString(3, message);
             prep.executeUpdate();
 
-            con.close();
             prep.close();
             rs.close();
 
             return true;
 
+        } catch(SQLIntegrityConstraintViolationException Ex){
+            System.out.println("You have already initiated a friendship");
         } catch (SQLException Ex) {
             System.out.println("Friends >> Error: "
                     + Ex.toString());
