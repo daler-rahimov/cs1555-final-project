@@ -23,16 +23,16 @@ public class Profile {
 
         if(!isTest) {
             System.out.println("Please enter your name: ");
-            name = UserInput.getID();
+            name = UserInput.getUserName();
 
             System.out.println("Please enter your email: ");
-            email = UserInput.getID();
+            email = UserInput.getEmail();
 
             System.out.println("Please enter your birthday (dd-mm-yyyy): ");
-            date = UserInput.getID();
+            date = UserInput.getBDay();
 
             System.out.println("Please enter a password: ");
-            password = UserInput.getID();
+            password = UserInput.getPassword();
         } else {
             name = "Gabby";
             email = "Gabby@pitt.edu";

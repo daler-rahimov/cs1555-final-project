@@ -162,23 +162,27 @@ public class Friends {
                 //insert all friends
                 while(pendingFriends.next()){
                     //one direction
-                    String insertSQL = "INSERT INTO friends(userID1, userID2, JDate, message) VALUES(?, ?, ?, ?)";
-                    prep = con.prepareStatement(insertSQL);
-                    prep.setString(1, userID1);
-                    prep.setString(2, pendingFriends.getString(1));
-                    prep.setTimestamp(3, new Timestamp(new java.util.Date().getTime()));
-                    prep.setString(4, pendingFriends.getString(2));
-                    prep.executeUpdate();
+                    try {
+                        String insertSQL = "INSERT INTO friends(userID1, userID2, JDate, message) VALUES(?, ?, ?, ?)";
+                        prep = con.prepareStatement(insertSQL);
+                        prep.setString(1, userID1);
+                        prep.setString(2, pendingFriends.getString(1));
+                        prep.setTimestamp(3, new Timestamp(new java.util.Date().getTime()));
+                        prep.setString(4, pendingFriends.getString(2));
+                        prep.executeUpdate();
 
-                    //second direction
-                    insertSQL = "INSERT INTO friends(userID1, userID2, JDate, message) VALUES(?, ?, ?, ?)";
-                    prep = con.prepareStatement(insertSQL);
-                    prep.setString(1, pendingFriends.getString(1));
-                    prep.setString(2, userID1);
-                    prep.setTimestamp(3, new Timestamp(new java.util.Date().getTime()));
-                    prep.setString(4, pendingFriends.getString(2));
-                    prep.executeUpdate();
-                    prep.close();
+                        //second direction
+                        insertSQL = "INSERT INTO friends(userID1, userID2, JDate, message) VALUES(?, ?, ?, ?)";
+                        prep = con.prepareStatement(insertSQL);
+                        prep.setString(1, pendingFriends.getString(1));
+                        prep.setString(2, userID1);
+                        prep.setTimestamp(3, new Timestamp(new java.util.Date().getTime()));
+                        prep.setString(4, pendingFriends.getString(2));
+                        prep.executeUpdate();
+                        prep.close();
+                    } catch (SQLIntegrityConstraintViolationException Ex){
+                        System.out.println("You already friends with someone selected.");
+                    }
                 }
 
                 String curGroup = null;
@@ -190,12 +194,16 @@ public class Friends {
                     members = groupRequests.get(curGroup);
                     Iterator<String> mem = members.iterator();
                     while(mem.hasNext()) {
-                        String insertSQl = "INSERT INTO groupMembership(gID, userID) VALUES(?, ?)";
-                        prep = con.prepareStatement(insertSQl);
-                        prep.setString(1, curGroup);
-                        prep.setString(2, mem.next());
-                        prep.executeUpdate();
-                        prep.close();
+                        try {
+                            String insertSQl = "INSERT INTO groupMembership(gID, userID) VALUES(?, ?)";
+                            prep = con.prepareStatement(insertSQl);
+                            prep.setString(1, curGroup);
+                            prep.setString(2, mem.next());
+                            prep.executeUpdate();
+                            prep.close();
+                        } catch (SQLIntegrityConstraintViolationException Ex){
+                            System.out.println("Someone selected is already a groupmember.");
+                        }
                     }
                 }
             }
@@ -241,23 +249,27 @@ public class Friends {
 
                         if (canAdd) {
                             //look through pending friends
-                            String insertSQL = "INSERT INTO friends(userID1, userID2, JDate, message) VALUES(?, ?, ?, ?)";
-                            prep = con.prepareStatement(insertSQL);
-                            prep.setString(1, userID1);
-                            prep.setString(2, userID2);
-                            prep.setTimestamp(3, new Timestamp(new java.util.Date().getTime()));
-                            prep.setString(4, pendingFriends.getString(2));
-                            prep.executeUpdate();
+                            try {
+                                String insertSQL = "INSERT INTO friends(userID1, userID2, JDate, message) VALUES(?, ?, ?, ?)";
+                                prep = con.prepareStatement(insertSQL);
+                                prep.setString(1, userID1);
+                                prep.setString(2, userID2);
+                                prep.setTimestamp(3, new Timestamp(new java.util.Date().getTime()));
+                                prep.setString(4, pendingFriends.getString(2));
+                                prep.executeUpdate();
 
-                            //second direction
-                            insertSQL = "INSERT INTO friends(userID1, userID2, JDate, message) VALUES(?, ?, ?, ?)";
-                            prep = con.prepareStatement(insertSQL);
-                            prep.setString(1, pendingFriends.getString(1));
-                            prep.setString(2, userID1);
-                            prep.setTimestamp(3, new Timestamp(new java.util.Date().getTime()));
-                            prep.setString(4, pendingFriends.getString(2));
-                            prep.executeUpdate();
-                            prep.close();
+                                //second direction
+                                insertSQL = "INSERT INTO friends(userID1, userID2, JDate, message) VALUES(?, ?, ?, ?)";
+                                prep = con.prepareStatement(insertSQL);
+                                prep.setString(1, pendingFriends.getString(1));
+                                prep.setString(2, userID1);
+                                prep.setTimestamp(3, new Timestamp(new java.util.Date().getTime()));
+                                prep.setString(4, pendingFriends.getString(2));
+                                prep.executeUpdate();
+                                prep.close();
+                            } catch (SQLIntegrityConstraintViolationException Ex){
+                                System.out.println("You already friends with this person.");
+                            }
                         } else {
                             System.out.println("Not a valid userID. Please select again.");
                         }
@@ -269,7 +281,6 @@ public class Friends {
                         } else {
                             gID = "9";
                         }
-
 
                         //confirm that this person is manager
                         //look through managed groups
@@ -299,12 +310,16 @@ public class Friends {
                             }
 
                             if(didRequest) {
-                                String insertSQl = "INSERT INTO groupMembership(gID, userID) VALUES(?, ?)";
-                                prep = con.prepareStatement(insertSQl);
-                                prep.setString(1, gID);
-                                prep.setString(2, userID2);
-                                prep.executeUpdate();
-                                prep.close();
+                                try {
+                                    String insertSQl = "INSERT INTO groupMembership(gID, userID) VALUES(?, ?)";
+                                    prep = con.prepareStatement(insertSQl);
+                                    prep.setString(1, gID);
+                                    prep.setString(2, userID2);
+                                    prep.executeUpdate();
+                                    prep.close();
+                                } catch (SQLIntegrityConstraintViolationException Ex){
+                                    System.out.println("This person is already in the group.");
+                                }
                             } else {
                                 System.out.println("This person did not request to join the group.");
                             }

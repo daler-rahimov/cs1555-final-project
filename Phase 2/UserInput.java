@@ -35,7 +35,7 @@ public class UserInput {
         int size;
         String input;
         do {
-            System.out.print("Enter id (<20 chars) >");
+            System.out.print("Enter ID: (<20 chars) >");
             input = scanner.next();
             size = input.length();
         } while (size > 20);
@@ -49,7 +49,49 @@ public class UserInput {
         int size;
         String input;
         do {
-            System.out.print("Enter id (<20 chars) >");
+            System.out.print("Enter Name: (<20 chars) >");
+            input = scanner.next();
+            size = input.length();
+        } while (size > 20);
+        return input;
+    }
+
+    public static String getEmail(String message) {
+        String userID;
+        Scanner scanner = new Scanner(System.in);
+        System.out.println(message);
+        int size;
+        String input;
+        do {
+            System.out.print("Enter Email: (<20 chars) >");
+            input = scanner.next();
+            size = input.length();
+        } while (size > 20);
+        return input;
+    }
+
+    public static String getBDay(String message) {
+        String userID;
+        Scanner scanner = new Scanner(System.in);
+        System.out.println(message);
+        int size;
+        String input;
+        do {
+            System.out.print("Enter Birthday: (<20 chars) >");
+            input = scanner.next();
+            size = input.length();
+        } while (size > 20);
+        return input;
+    }
+
+    public static String getPassword(String message) {
+        String userID;
+        Scanner scanner = new Scanner(System.in);
+        System.out.println(message);
+        int size;
+        String input;
+        do {
+            System.out.print("Enter Password: (<20 chars) >");
             input = scanner.next();
             size = input.length();
         } while (size > 20);
@@ -63,7 +105,7 @@ public class UserInput {
         String input;
 
         do {
-            System.out.print("Enter you message (<200 chars, \n for new line) >");
+            System.out.print("Enter your message (<200 chars, \n for new line) >");
             input = scanner.nextLine();
             size = input.length();
         } while (size > 200 || size == 0);
