@@ -71,12 +71,13 @@ public class MainTest {
         Profile.searchForUser();
         System.out.println("**************************");
 
+        //hi
         System.out.println("We now are testing Friends");
         Friends.isTest = true;
         Friends.isTest2 = true;
 
-        System.out.println("Confirm all requests for user 4");
-        Friends.confirmFriendship("4");
+        System.out.println("Confirm all requests for user 6");
+        Friends.confirmFriendship("6");
         System.out.println("**************************");
 
         System.out.println("Manually confirm a group member that user 66 manages");
