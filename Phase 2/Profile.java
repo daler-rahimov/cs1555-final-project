@@ -422,7 +422,7 @@ public class Profile {
 
             ///// 3. Close connections to db, return to main menu
             //Should I pass something back to let the program know they have logged out?
-            
+
             prep.close();
 
         } catch (SQLException Ex) {
