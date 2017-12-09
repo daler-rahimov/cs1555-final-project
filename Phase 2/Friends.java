@@ -331,7 +331,6 @@ public class Friends {
             }
 
             prep.close();
-            con.close();
             groupsManaged.close();
             pendingFriends.close();
 
