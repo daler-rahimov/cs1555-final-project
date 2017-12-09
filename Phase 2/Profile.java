@@ -290,7 +290,7 @@ public class Profile {
 
     /**
      * Given a string on which to match any user in the system, any item in this
-     * string must be matched against any significant field of a user’s profile.
+     * string must be matched against any significant field of a users profile.
      * That is if the user searches for xyz abc, the results should be the set
      * of all profiles that match xyz union the set of all profiles that
      * matches abc
@@ -402,7 +402,7 @@ public class Profile {
 
     /**
      * This option should cleanly shut down and exit the program after marking
-     * the time of the user’s logout in the profile relation,
+     * the time of the users logout in the profile relation,
      */
     public static void logout(String userID) {
         try{

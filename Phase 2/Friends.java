@@ -345,12 +345,12 @@ public class Friends {
     }
 
     /**
-     * This task supports the browsing of the user’s friends and of their friends’ profiles. It first
-     displays each of the user’s friends’ names and userIDs and those of any friend of those friends.
-     Then it allows the user to either retrieve a friend’s entire profile by entering the appropriate
+     * This task supports the browsing of the users friends and of their friends profiles. It first
+     displays each of the users friends names and userIDs and those of any friend of those friends.
+     Then it allows the user to either retrieve a friends entire profile by entering the appropriate
      userID or exit browsing and return to the main menu by entering 0 as a userID. When selected,
-     a friend’s profile should be displayed in a nicely formatted way, after which the user should be
-     prompted to either select to retrieve another friend’s profile or return to the main menu.
+     a friends profile should be displayed in a nicely formatted way, after which the user should be
+     prompted to either select to retrieve another friends profile or return to the main menu.
      *
      */
     public static void displayFriends(String userID1){
