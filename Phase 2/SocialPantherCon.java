@@ -50,7 +50,7 @@ public class SocialPantherCon {
                // String url = "jdbc:oracle:thin:@127.0.0.1:1521:xe";
                 
                 connection = DriverManager.getConnection(url, username, password);
-                connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+//                connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
             } catch (SQLException Ex) {
                 System.out.println("SocialPantherCcon >> Error connecting to database.  Machine Error: "
                         + Ex.toString());
