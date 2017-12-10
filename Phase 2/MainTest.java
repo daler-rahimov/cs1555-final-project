@@ -85,7 +85,7 @@ public class MainTest {
         System.out.println("**************************");
 
         System.out.println("User 25 will send a friend request to user 15");
-        System.out.println("Was friendship initiated: " + Friends.initiateFriendship("25"));
+        Friends.initiateFriendship("25");
         System.out.println("**************************");
 
         System.out.println("We will look at user 7's friends and look a profile that is selectable");
