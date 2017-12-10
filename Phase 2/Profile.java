@@ -466,7 +466,6 @@ public class Profile {
 
         java.util.Date today = new java.util.Date();
         return new java.sql.Timestamp(today.getTime());
-
     }
 
     private String userID;

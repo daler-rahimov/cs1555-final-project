@@ -371,9 +371,10 @@ public class Friends {
                 } while (select != 3);
             }
 
+            con.commit();
+
             //// 6. Any requests that were not accepted are now deleted
-            String delete = "DELETE FROM pendingFriends\n"
-                    + "WHERE toID = ?";
+            String delete = "DELETE FROM pendingFriends WHERE toID = ?";
             prep = con.prepareStatement(delete);
             prep.setString(1, userID1);
             prep.executeUpdate();
@@ -381,8 +382,7 @@ public class Friends {
 
             groupsManaged.beforeFirst();
             while (groupsManaged.next()) {
-                delete = "DELETE FROM pendingGroupmembers\n"
-                        + "WHERE gID = ?";
+                delete = "DELETE FROM pendingGroupmembers WHERE gID = ?";
                 prep = con.prepareStatement(delete);
                 prep.setString(1, groupsManaged.getString(1));
                 prep.executeUpdate();
@@ -528,7 +528,7 @@ public class Friends {
             }
 
             prep.close();
-            con.close();
+            //con.close();
         } catch (SQLException Ex) {
             System.out.println("Friends >> Error: "
                     + Ex.toString());

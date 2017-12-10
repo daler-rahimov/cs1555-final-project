@@ -15,10 +15,6 @@ public class MainTest {
     public static void main(String avg[]) {
         try {
 
-            SocialPantherCon sCon = new SocialPantherCon();
-            Connection con = sCon.getConnection();
-
-
             System.out.println("Calling sentMessageToUser for testing: User 1 will send message to 100");
             Message.isTest = true;
             Message.sentMessageToUser("1");
@@ -69,17 +65,20 @@ public class MainTest {
             System.out.println("\tWas the profile logged in?: " + Profile.login()); //returns true, "1", "TMA58URO6JG"
             System.out.println("**************************");
 
+            SocialPantherCon sCon = new SocialPantherCon();
+            Connection con = sCon.getConnection();
+
             System.out.println("Logging out user 2");
             Profile.logout("2");
-            String selectSQL = "SELELCT userID, lastLogin\n"
+            String selectSQL = "SELECT userID, lastLogin\n"
                     + "FROM PROFILE\n"
                     + "WHERE userID = ?";
-            PreparedStatement prep = con.prepareStatement(selectSQL, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            PreparedStatement prep = con.prepareStatement(selectSQL, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
             prep.setString(1, "2");
             ResultSet rs = prep.executeQuery();
 
             while (rs.next()) {
-                System.out.println("\tLast login of user " + rs.getString(1) + " at " + rs.getTimeStamp(2));
+                System.out.println("\tLast login of user " + rs.getString(1) + " at " + rs.getTimestamp(2));
             }
             System.out.println("**************************");
 
@@ -96,7 +95,7 @@ public class MainTest {
             //show that the user was created
             selectSQL = "SELECT userID, name\n"
                     + "FROM PROFILE";
-            Statement stm = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            Statement stm = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
             rs = stm.executeQuery(selectSQL);
             while (rs.next()) {
                 if (rs.isLast()) {
@@ -104,12 +103,7 @@ public class MainTest {
                 }
             }
             System.out.println("**************************");
-
             System.out.println("Testing threeDegrees between user 43 and 48, full 3 hops");
-            //Profile.threeDegrees(); //direct friends, enter 43 and 44
-            //Profile.threeDegrees(); //2 hops, enter 43 and 47
-            //Profile.threeDegrees(); //3 hops, enter 43 and 48
-            Profile.threeDegrees(); //no path, enter 43 and 45
             System.out.println("**************************");
 
             System.out.println("We will search for users that match \"12\", \"Bob\", \"Gabby\"");
@@ -129,7 +123,11 @@ public class MainTest {
             prep = con.prepareStatement(selectSQL);
             prep.setString(1, "6");
             rs = prep.executeQuery();
-            if (rs.isLast()) {
+            int count = 0;
+            while(rs.next()){
+                count++;
+            }
+            if (count ==0) {
                 System.out.println("All requests were deleted");
             }
             System.out.println("**************************");
@@ -147,7 +145,11 @@ public class MainTest {
             prep = con.prepareStatement(selectSQL);
             prep.setString(1, "66");
             rs = prep.executeQuery();
-            if (rs.isLast()) {
+            count = 0;
+            while(rs.next()){
+                count++;
+            }
+            if (count == 0) {
                 System.out.println("All requests were deleted");
             }
             System.out.println("**************************");
