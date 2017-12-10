@@ -159,6 +159,8 @@ create or replace trigger sendMessagetoGroup
     end;
 /
 
+
+/*
 --groupRequestMsg
 
 create or replace trigger groupReqMsg
@@ -204,6 +206,6 @@ create or replace trigger friendReqMsg
     END IF;
 	end;
 /
-
+*/
 
 -------------****EndTriggers***-----------------

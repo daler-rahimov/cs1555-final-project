@@ -191,7 +191,7 @@ create or replace trigger sendMessagetoGroup
 /
 
 --groupRequestMsg
-
+/*
 create or replace trigger groupReqMsg
 	after insert on pendingGroupmembers
 	for each row
@@ -236,5 +236,6 @@ create or replace trigger friendReqMsg
 	end;
 /
 
+*/
 
 -------------****EndTriggers***-----------------
