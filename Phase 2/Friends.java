@@ -1,3 +1,4 @@
+
 import java.sql.*;
 import java.util.*;
 
@@ -7,19 +8,21 @@ public class Friends {
     public static boolean isTest2 = false;
 
     /**
-     * Create a pending friendship from the (logged in) user to another user based on userID. The
-     application should display the name of the person that will be sent a friends request and the user
-     should be prompted to enter a message to be sent along with the request. A last confirmation
-     should be requested of the user before an entry is inserted into the pendingFriends relation,
-     and success or failure feedback is displayed for the user.
+     * Create a pending friendship from the (logged in) user to another user
+     * based on userID. The application should display the name of the person
+     * that will be sent a friends request and the user should be prompted to
+     * enter a message to be sent along with the request. A last confirmation
+     * should be requested of the user before an entry is inserted into the
+     * pendingFriends relation, and success or failure feedback is displayed for
+     * the user.
      *
      * @param userID1
      */
-    public static void initiateFriendship(String userID1){
+    public static void initiateFriendship(String userID1) {
         //make user input here
         String userID2, message;
 
-        if(!isTest) {
+        if (!isTest) {
 
             System.out.println("Please enter the ID of the user you would like to befriend");
             userID2 = UserInput.getID();
@@ -45,8 +48,8 @@ public class Friends {
             prep.setString(1, userID1);
             ResultSet rs = prep.executeQuery();
 
-            while(rs.next()){
-                if(rs.getString(1).equals(userID2)) {
+            while (rs.next()) {
+                if (rs.getString(1).equals(userID2)) {
                     System.out.println("Friend is: " + rs.getString(1));
                     System.out.println("Already friends");
                     return;
@@ -55,12 +58,18 @@ public class Friends {
 
             int selectionChoice = 0;
 
-            do{
-                String message1 = "Are you sure you want to initiate a friendship with user " + userID2 + "?\n" + "Options: \n" + "\t1. Yes\n"+ "\t2. No\n";
-                selectionChoice = UserInput.getInt(message1);
-            } while(selectionChoice != 1 && selectionChoice != 2);
+            do {
+                if (!isTest) {
+                    String message1 = "Are you sure you want to initiate a friendship with user " + userID2 + "?\n" + "Options: \n" + "\t1. Yes\n" + "\t2. No\n";
+                    selectionChoice = UserInput.getInt(message1);
+
+                }else{
+                    selectionChoice= 1;
+                }
+
+            } while (selectionChoice != 1 && selectionChoice != 2);
             ///// 3. If not already friends, insert into pendingFriendships
-            if(selectionChoice == 1) {
+            if (selectionChoice == 1) {
                 String insert = "INSERT INTO pendingFriends(fromID, toID, message)"
                         + "VALUES ("
                         + "?, "
@@ -73,14 +82,14 @@ public class Friends {
                 prep.executeUpdate();
 
                 System.out.println("Friendship Initiated");
-            } else{
+            } else {
                 System.out.println("Friendship was not initiated");
             }
 
             prep.close();
             rs.close();
 
-        } catch(SQLIntegrityConstraintViolationException Ex){
+        } catch (SQLIntegrityConstraintViolationException Ex) {
             System.out.println("You have already initiated a friendship with this user");
         } catch (SQLException Ex) {
             System.out.println("Friends >> Error: "
@@ -89,16 +98,19 @@ public class Friends {
     }
 
     /**
-     *This task should first display a formatted, numbered list of all outstanding friends and group
-     requests with an associated messages. Then, the user should be prompted for a number of the
-     request he or she would like to confirm or given the option to confirm them all. The application
-     should move the request from the appropriate pendingFriends or pendingGroupmembers
-     relation to the friends or groupMembership relation. The remaining requests which were not
-     selected are declined and removed from pendingFriends and pendingGroupmembers relations.
+     * This task should first display a formatted, numbered list of all
+     * outstanding friends and group requests with an associated messages. Then,
+     * the user should be prompted for a number of the request he or she would
+     * like to confirm or given the option to confirm them all. The application
+     * should move the request from the appropriate pendingFriends or
+     * pendingGroupmembers relation to the friends or groupMembership relation.
+     * The remaining requests which were not selected are declined and removed
+     * from pendingFriends and pendingGroupmembers relations.
+     *
      * @param userID1
      */
-    public static void confirmFriendship(String userID1){
-        try{
+    public static void confirmFriendship(String userID1) {
+        try {
             SocialPantherCon sCon = new SocialPantherCon();
             Connection con = sCon.getConnection();
 
@@ -107,12 +119,12 @@ public class Friends {
             String selectSQL = "SELECT fromID, message\n"
                     + "FROM pendingFriends\n"
                     + "WHERE toID = ?";
-            PreparedStatement prep = con.prepareStatement(selectSQL,  ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            PreparedStatement prep = con.prepareStatement(selectSQL, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             prep.setString(1, userID1);
             ResultSet pendingFriends = prep.executeQuery();
 
             System.out.println("Here are all your friend requests: ");
-            while(pendingFriends.next()){
+            while (pendingFriends.next()) {
                 System.out.println("\tUser " + pendingFriends.getString(1)
                         + " : " + pendingFriends.getString(2));
             }
@@ -121,7 +133,7 @@ public class Friends {
 
             //// 2. Check if user is manager of group
             ////    if yes, collect all groupRequests where the user is manager. list all requests and display messages
-            selectSQL ="SELECT gID\n"
+            selectSQL = "SELECT gID\n"
                     + "FROM groupMembership\n"
                     + "WHERE userID = ? AND role = 'manager'";
             prep = con.prepareStatement(selectSQL, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -131,7 +143,7 @@ public class Friends {
             Set<String> members = new HashSet<String>();
             Map<String, Set<String>> groupRequests = new HashMap<String, Set<String>>();
 
-            while(groupsManaged.next()){
+            while (groupsManaged.next()) {
                 selectSQL = "SELECT userID, message\n"
                         + "FROM pendingGroupmembers\n"
                         + "WHERE gID = ?";
@@ -140,7 +152,7 @@ public class Friends {
                 ResultSet pendingGroups = prep.executeQuery();
 
                 System.out.println("Here are all your group requests for group " + groupsManaged.getString(1) + " : ");
-                while(pendingGroups.next()){
+                while (pendingGroups.next()) {
                     members.add(pendingGroups.getString(1));
                     System.out.println("\tUser " + pendingGroups.getString(1)
                             + " : " + pendingGroups.getString(2));
@@ -158,20 +170,20 @@ public class Friends {
                         + "\t1. Select all\n"
                         + "\t2. Manually select\n"
                         + "\t3. Delete all requests\n";
-                if(!isTest && !isTest2){
+                if (!isTest && !isTest2) {
                     selectionChoice = UserInput.getInt(message);
-                } else if (isTest){
+                } else if (isTest) {
                     selectionChoice = 1;
                 } else {
                     selectionChoice = 2;
                 }
 
-            }while(selectionChoice <= 1 && selectionChoice >= 3);
+            } while (selectionChoice <= 1 && selectionChoice >= 3);
 
             //// 4. If confirm all, send all requests to correct tables
-            if(selectionChoice == 1){
+            if (selectionChoice == 1) {
                 //insert all friends
-                while(pendingFriends.next()){
+                while (pendingFriends.next()) {
                     //one direction
                     try {
                         String insertSQL = "INSERT INTO friends(userID1, userID2, JDate, message) VALUES(?, ?, ?, ?)";
@@ -191,7 +203,7 @@ public class Friends {
                         prep.setString(4, pendingFriends.getString(2));
                         prep.executeUpdate();
                         prep.close();
-                    } catch (SQLIntegrityConstraintViolationException Ex){
+                    } catch (SQLIntegrityConstraintViolationException Ex) {
                         System.out.println("You already friends with someone selected.");
                     }
                 }
@@ -200,11 +212,11 @@ public class Friends {
 
                 //insert all groupmembers
                 Iterator<String> group = groupRequests.keySet().iterator();
-                while(group.hasNext()){
+                while (group.hasNext()) {
                     curGroup = group.next();
                     members = groupRequests.get(curGroup);
                     Iterator<String> mem = members.iterator();
-                    while(mem.hasNext()) {
+                    while (mem.hasNext()) {
                         try {
                             String insertSQl = "INSERT INTO groupMembership(gID, userID) VALUES(?, ?)";
                             prep = con.prepareStatement(insertSQl);
@@ -212,20 +224,18 @@ public class Friends {
                             prep.setString(2, mem.next());
                             prep.executeUpdate();
                             prep.close();
-                        } catch (SQLIntegrityConstraintViolationException Ex){
+                        } catch (SQLIntegrityConstraintViolationException Ex) {
                             System.out.println("Someone selected is already a groupmember.");
                         }
                     }
                 }
-            }
-
-            //// 5. If select, have a loop that will ask user to select the the number of confirmations
+            } //// 5. If select, have a loop that will ask user to select the the number of confirmations
             ////    then ask user to select which requests to confirm
             ////    Potential corner: if user selects more than initially indicated, prompt user if they want to select
             ////    more than initially indicated? Or just make array whatever size of input??
             ////    Remove any accepted requests
             ////    Potentially break this down for
-            else if(selectionChoice == 2) {
+            else if (selectionChoice == 2) {
                 int count = 0;
                 int select = 0;
                 do {
@@ -235,12 +245,11 @@ public class Friends {
                             + "\t2. Groupmember\n"
                             + "\t3. Exit\n";
                     do {
-                        if(!isTest && !isTest2) {
+                        if (!isTest && !isTest2) {
                             select = UserInput.getInt(message);
-                        } else if(count > 1){
+                        } else if (count > 1) {
                             select = 3;
-                        }
-                        else {
+                        } else {
                             count++;
                             select = 2;
                         }
@@ -253,9 +262,10 @@ public class Friends {
                         //check if input is valid
                         Boolean canAdd = false;
                         pendingFriends.beforeFirst();
-                        while(pendingFriends.next()){
-                            if(pendingFriends.getString(1).equals(userID2))
+                        while (pendingFriends.next()) {
+                            if (pendingFriends.getString(1).equals(userID2)) {
                                 canAdd = true;
+                            }
                         }
 
                         if (canAdd) {
@@ -278,7 +288,7 @@ public class Friends {
                                 prep.setString(4, pendingFriends.getString(2));
                                 prep.executeUpdate();
                                 prep.close();
-                            } catch (SQLIntegrityConstraintViolationException Ex){
+                            } catch (SQLIntegrityConstraintViolationException Ex) {
                                 System.out.println("You already friends with this person.");
                             }
                         } else {
@@ -287,7 +297,7 @@ public class Friends {
                     } else if (select == 2) {
                         System.out.println("Please select groupID you want to confirm for: ");
                         String gID;
-                        if(!isTest && !isTest2){
+                        if (!isTest && !isTest2) {
                             gID = UserInput.getID();
                         } else {
                             gID = "9";
@@ -297,15 +307,16 @@ public class Friends {
                         //look through managed groups
                         Boolean isManager = false;
                         groupsManaged.beforeFirst();
-                        while(groupsManaged.next()){
-                            if(groupsManaged.getString(1).equals(gID))
+                        while (groupsManaged.next()) {
+                            if (groupsManaged.getString(1).equals(gID)) {
                                 isManager = true;
+                            }
                         }
 
-                        if(isManager) {
+                        if (isManager) {
                             System.out.println("Please select userID of new group member: ");
                             String userID2;
-                            if(!isTest && !isTest2) {
+                            if (!isTest && !isTest2) {
                                 userID2 = UserInput.getID();
                             } else {
                                 userID2 = "99";
@@ -315,12 +326,13 @@ public class Friends {
                             //look through group for that grouprequests
                             Boolean didRequest = false;
                             Iterator<String> it = members.iterator();
-                            while(it.hasNext()){
-                                if(it.next().equals(userID2))
+                            while (it.hasNext()) {
+                                if (it.next().equals(userID2)) {
                                     didRequest = true;
+                                }
                             }
 
-                            if(didRequest) {
+                            if (didRequest) {
                                 try {
                                     String insertSQl = "INSERT INTO groupMembership(gID, userID) VALUES(?, ?)";
                                     prep = con.prepareStatement(insertSQl);
@@ -328,7 +340,7 @@ public class Friends {
                                     prep.setString(2, userID2);
                                     prep.executeUpdate();
                                     prep.close();
-                                } catch (SQLIntegrityConstraintViolationException Ex){
+                                } catch (SQLIntegrityConstraintViolationException Ex) {
                                     System.out.println("This person is already in the group.");
                                 }
                             } else {
@@ -338,7 +350,7 @@ public class Friends {
                             System.out.println("You are not a manager of this group. Please select another group.");
                         }
                     }
-                }while(select != 3);
+                } while (select != 3);
             }
 
             //// 6. Any requests that were not accepted are now deleted
@@ -349,7 +361,7 @@ public class Friends {
             prep.executeUpdate();
 
             groupsManaged.beforeFirst();
-            while(groupsManaged.next()){
+            while (groupsManaged.next()) {
                 delete = "DELETE FROM pendingGroupmembers\n"
                         + "WHERE gID = ?";
                 prep = con.prepareStatement(delete);
@@ -361,7 +373,7 @@ public class Friends {
             groupsManaged.close();
             pendingFriends.close();
 
-        } catch (SQLException Ex){
+        } catch (SQLException Ex) {
             System.out.println("Friends >> Error: "
                     + Ex.toString());
         }
@@ -370,16 +382,18 @@ public class Friends {
     }
 
     /**
-     * This task supports the browsing of the users friends and of their friends profiles. It first
-     displays each of the users friends names and userIDs and those of any friend of those friends.
-     Then it allows the user to either retrieve a friends entire profile by entering the appropriate
-     userID or exit browsing and return to the main menu by entering 0 as a userID. When selected,
-     a friends profile should be displayed in a nicely formatted way, after which the user should be
-     prompted to either select to retrieve another friends profile or return to the main menu.
+     * This task supports the browsing of the users friends and of their friends
+     * profiles. It first displays each of the users friends names and userIDs
+     * and those of any friend of those friends. Then it allows the user to
+     * either retrieve a friends entire profile by entering the appropriate
+     * userID or exit browsing and return to the main menu by entering 0 as a
+     * userID. When selected, a friends profile should be displayed in a nicely
+     * formatted way, after which the user should be prompted to either select
+     * to retrieve another friends profile or return to the main menu.
      *
      */
-    public static void displayFriends(String userID1){
-        try{
+    public static void displayFriends(String userID1) {
+        try {
             SocialPantherCon sCon = new SocialPantherCon();
             Connection con = sCon.getConnection();
             Set<String> toDisplay = new HashSet<String>();
@@ -395,7 +409,7 @@ public class Friends {
 
             Boolean friends = false;
 
-            while(userFriends.next()){
+            while (userFriends.next()) {
                 friends = true;
                 toDisplay.add(userFriends.getString(1));
                 selectSQL = "SELECT userID2\n"
@@ -406,7 +420,7 @@ public class Friends {
                 //prep.setString(2, userID1);
                 ResultSet friendFriends = prep.executeQuery();
 
-                while(friendFriends.next()){
+                while (friendFriends.next()) {
                     toDisplay.add(friendFriends.getString(1));
                 }
 
@@ -415,7 +429,7 @@ public class Friends {
 
             userFriends.close();
 
-            if(!friends){
+            if (!friends) {
                 System.out.println("There are no profiles to display.");
                 prep.close();
                 con.close();
@@ -425,7 +439,7 @@ public class Friends {
             //create iterator to display all the choices
             Iterator<String> it = toDisplay.iterator();
             System.out.println("Here is a list of IDs that are your friends and their friends: ");
-            while(it.hasNext()){
+            while (it.hasNext()) {
                 System.out.println("\t" + it.next());
             }
 
@@ -438,22 +452,22 @@ public class Friends {
                     + "1: Yes\n"
                     + "2: No \n";
             int keepLooking;
-            if(!isTest) {
+            if (!isTest) {
                 keepLooking = UserInput.getInt(message);
             } else {
                 keepLooking = 1;
             }
 
-            while(keepLooking == 1) {
+            while (keepLooking == 1) {
                 System.out.println("Please enter the ID of the user you want to look at: ");
 
                 String userID2;
-                if(!isTest) {
+                if (!isTest) {
                     userID2 = UserInput.getID();
                 } else {
                     userID2 = "94";
                 }
-                if(toDisplay.contains(userID2)){
+                if (toDisplay.contains(userID2)) {
                     selectSQL = "SELECT userID, name, email, date_of_birth, lastLogin\n"
                             + "FROM PROFILE\n"
                             + "WHERE userID = ?";
@@ -472,20 +486,20 @@ public class Friends {
                             + "Options: \n"
                             + "\t1: Yes\n"
                             + "\t2: No \n";
-                    if(!isTest) {
+                    if (!isTest) {
                         keepLooking = UserInput.getInt(message);
-                    } else{
+                    } else {
                         keepLooking = 2;
                     }
 
                     rs.close();
-                } else{
+                } else {
                     System.out.println("This user if not accessible.");
                     message = "Would you like to try a different user?\n"
                             + "Options: \n"
                             + "1: Yes\n"
                             + "2: No \n";
-                    if(!isTest) {
+                    if (!isTest) {
                         keepLooking = UserInput.getInt(message);
                     } else {
                         keepLooking = 2;
@@ -495,11 +509,10 @@ public class Friends {
 
             prep.close();
             con.close();
-        } catch (SQLException Ex){
+        } catch (SQLException Ex) {
             System.out.println("Friends >> Error: "
                     + Ex.toString());
         }
-
 
     }
 }
