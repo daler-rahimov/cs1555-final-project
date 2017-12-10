@@ -26,14 +26,14 @@ public class Group {
 
         String groupName;
         if (!isTest) {
-            groupName = UserInput.getLine20("Enter a group name ");
+            groupName = UserInput.getLine20("Enter a group name: ");
         } else {
             groupName = "AutoTest";
         }
 
         String discription;
         if (!isTest) {
-            discription = UserInput.getLine200("Enter group description");
+            discription = UserInput.getLine200("Enter group description: ");
         } else {
             discription = "This is from auto Test";
         }
@@ -176,11 +176,11 @@ public class Group {
 
             // 2. Get gID
             int gID;
-            if (isTest) {
+            if (isTest || isNTest) {
                 gID = 1;
             } else if (isNTest) {
-                gID = 1000;
-            } else {
+                gID = 2;
+            } else{
                 gID = UserInput.getInt("Enter a group you want to sign up for >");
             }
             String message;

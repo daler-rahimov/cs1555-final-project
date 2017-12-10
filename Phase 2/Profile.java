@@ -10,6 +10,7 @@ public class Profile {
 
     public static final DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");// use java.sql classes instead
     public static boolean isTest = false;
+    public static boolean isTest2 = false;
 
     /**
      * Given a name, email address, and date of birth, add a new user to the
@@ -383,15 +384,18 @@ public class Profile {
     public static Boolean login() {
         String userID, password;
 
-        if(!isTest) {
+        if(!isTest && !isTest2) {
             System.out.print("Please enter your userID: ");
             userID = UserInput.getID();
 
             String message = "Please enter your passord: ";
             password = UserInput.getLine20(message);
-        } else {
+        } else if(isTest){
             userID = "1";
             password = "TMA58URO6JG";
+        } else {
+            userID = "1";
+            password = "ajskldhg";
         }
 
         Boolean loggedIn = false;
@@ -415,7 +419,7 @@ public class Profile {
                     loggedIn = true;
             }
             else {
-                System.err.print("User login or password is incorrect");
+                System.err.println("User login or password is incorrect");
                 return false;
             }
 

@@ -485,7 +485,7 @@ public class Friends {
                 if (!isTest) {
                     userID2 = UserInput.getID();
                 } else {
-                    userID2 = "94";
+                    userID2 = "4";
                 }
                 if (toDisplay.contains(userID2)) {
                     selectSQL = "SELECT userID, name, email, date_of_birth, lastLogin\n"
