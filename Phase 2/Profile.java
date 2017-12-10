@@ -90,7 +90,7 @@ public class Profile {
             // create a profile instance Profile(String userID, String name, String password, java.sql.Date dateOfBirth, Timestamp lastlogin, String email)
             //Profile p = new Profile(Integer.toString(nextUserID), name, password, birthdate, new Timestamp(new java.util.Date().getTime()), email);
             con.commit();
-           // p.insertToDb(con);
+            // p.insertToDb(con);
 
             rs.close();
 
