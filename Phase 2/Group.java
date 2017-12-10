@@ -8,6 +8,7 @@ import java.sql.Statement;
 public class Group {
 
     public static boolean isTest = false;
+    public static boolean isNTest = false;
 
     /**
      * 6. createGroup Given a name, description, and membership limit, add a new
@@ -51,9 +52,9 @@ public class Group {
             // 4. add new group
             // 4.1 get next posible gID
             String selectSQL = "select max(to_number(regexp_substr(gID, '\\d+'))) msgid from GROUPS";
-            
+
             Statement stmt = con.createStatement();
-            String lock = "lock table "+ "FRIENDS" +" in exclusive mode";
+            String lock = "lock table " + "FRIENDS" + " in exclusive mode";
             stmt.execute(lock);
 
             ResultSet rs = stmt.executeQuery(selectSQL);
@@ -175,16 +176,18 @@ public class Group {
 
             // 2. Get gID
             int gID;
-            if (!isTest) {
-                gID = UserInput.getInt("Enter a group you want to sign up for >");
-            } else {
+            if (isTest) {
                 gID = 1;
+            } else if (isNTest) {
+                gID = 1000;
+            } else {
+                gID = UserInput.getInt("Enter a group you want to sign up for >");
             }
             String message;
-            if (!isTest) {
-                message = UserInput.getLine200("Enter you message for the group ");
-            } else {
+            if (isTest || isNTest) {
                 message = "This is from Auto Test MainTest";
+            } else {
+                message = UserInput.getLine200("Enter you message for the group (\\n for new line) ");
             }
             // 3. Check if gtoupmember + group Requests not > limit
             selectSQL = "select count(*) as count\n"
@@ -200,6 +203,7 @@ public class Group {
                 currMemberCount = rs.getInt("count");
             } else {
                 System.err.println("Group>initiateAddingGroup()  gId does not exist !!!");
+                return;
             }
 
             selectSQL = "select gLimit from groups where gID = ?";
