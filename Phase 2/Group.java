@@ -51,7 +51,11 @@ public class Group {
             // 4. add new group
             // 4.1 get next posible gID
             String selectSQL = "select max(to_number(regexp_substr(gID, '\\d+'))) msgid from GROUPS";
+            
             Statement stmt = con.createStatement();
+            String lock = "lock table "+ "FRIENDS" +" in exclusive mode";
+            stmt.execute(lock);
+
             ResultSet rs = stmt.executeQuery(selectSQL);
             int nextGID = 0;
             if (rs.next()) {

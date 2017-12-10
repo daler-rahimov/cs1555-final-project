@@ -113,6 +113,8 @@ public class Message {
             // get max values of msgID. Assuption id is alway numeric
             selectSQL = "select max(to_number(regexp_substr(msgid, '\\d+'))) msgid from MESSAGES";
             stmt = con.createStatement();
+            String lock = "lock table " + "FRIENDS" + " in exclusive mode";
+            stmt.execute(lock);
             rs = stmt.executeQuery(selectSQL);
             int nextMsgIDInt = 0;
             if (rs.next()) {
@@ -227,6 +229,8 @@ public class Message {
             ////////////////////////////////////////////////////////////////////
             // get max values of msgID. Assuption id is alway numeric
             selectSQL = "select max(to_number(regexp_substr(msgid, '\\d+'))) msgid from MESSAGES";
+            String lock = "lock table " + "FRIENDS" + " in exclusive mode";
+            stmt.execute(lock);
             stmt = con.createStatement();
             rs = stmt.executeQuery(selectSQL);
             int nextMsgIDInt = 0;
