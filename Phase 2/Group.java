@@ -8,6 +8,7 @@ import java.sql.Statement;
 public class Group {
 
     public static boolean isTest = false;
+
     /**
      * 6. createGroup Given a name, description, and membership limit, add a new
      * group to the system, add the user as its first member with the role
@@ -23,29 +24,26 @@ public class Group {
         // 5. make current user a member with manager priviligoues
 
         String groupName;
-        if(!isTest){
+        if (!isTest) {
             groupName = UserInput.getLine20("Enter a group name ");
-        }else{
+        } else {
             groupName = "AutoTest";
         }
-        
-        String discription ;
-        if (!isTest){
+
+        String discription;
+        if (!isTest) {
             discription = UserInput.getLine200("Enter group description");
-        }else{
+        } else {
             discription = "This is from auto Test";
         }
-        
-        
-        int gLimit ;
-        if(!isTest){
+
+        int gLimit;
+        if (!isTest) {
             gLimit = UserInput.getInt("Enter group limit > ");
-        }else{
+        } else {
             gLimit = 100;
         }
 
-        
-        
         try {
             SocialPantherCon sCon = new SocialPantherCon();
             Connection con = sCon.getConnection();
@@ -83,6 +81,7 @@ public class Group {
             preparedStatement.setString(2, userID);
             preparedStatement.executeQuery();
             ////////////////////////////////////////////////////////////////////
+            con.commit();
             stmt.close();
             rs.close();
         } catch (SQLException Ex) {
@@ -126,6 +125,8 @@ public class Group {
             preparedStatement.setInt(4, gLimit);
 
             preparedStatement.executeQuery();
+            con.commit();
+            stmt.close();
 
         } catch (SQLException Ex) {
             System.err.println("Group>insertToDb() >> Error: "
@@ -170,15 +171,15 @@ public class Group {
 
             // 2. Get gID
             int gID;
-            if(!isTest){
+            if (!isTest) {
                 gID = UserInput.getInt("Enter a group you want to sign up for >");
-            }else{
+            } else {
                 gID = 1;
             }
             String message;
-            if(!isTest){
+            if (!isTest) {
                 message = UserInput.getLine200("Enter you message for the group ");
-            }else{
+            } else {
                 message = "This is from Auto Test MainTest";
             }
             // 3. Check if gtoupmember + group Requests not > limit
@@ -231,14 +232,14 @@ public class Group {
                 preparedStatement.setString(2, userID);
                 preparedStatement.setString(3, message);
                 rs = preparedStatement.executeQuery();
-                if (rs.next()){
+                if (rs.next()) {
                     System.out.println("Your request has been sent. ");
                 }
             }
 
             ////////////////////////////////////////////////////////////////////
-            con.close();
-//            stmt.close();
+//            con.close();
+            con.commit();
             rs.close();
         } catch (SQLException Ex) {
             System.out.println("Group>initiateAddingGroup() >> Error: "

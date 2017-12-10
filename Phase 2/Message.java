@@ -127,6 +127,7 @@ public class Message {
             }
             ////////////////////////////////////////////////////////////////////
 //            con.close();
+            con.commit();
             stmt.close();
             rs.close();
         } catch (SQLException Ex) {
@@ -242,6 +243,7 @@ public class Message {
             }
             ////////////////////////////////////////////////////////////////////
 //            con.close();
+            con.commit();
             stmt.close();
             rs.close();
         } catch (SQLException Ex) {
@@ -284,6 +286,9 @@ public class Message {
             for (int i = 0; i < allMessages.size(); i++) {
                 System.out.format("%-8s%-8s%-14s%-200s\n", allMessages.get(i).getMsgID(), allMessages.get(i).getFromID(), allMessages.get(i).getDateSent(), allMessages.get(i).getMessage());
             }
+            con.commit();
+            stmt.close();
+            rs.close();
             System.out.println("--------------------------------");
         } catch (SQLException Ex) {
             System.out.println("Message>displayMessages()  >> Error: "
@@ -336,6 +341,9 @@ public class Message {
             for (int i = 0; i < allMessages.size(); i++) {
                 System.out.format("%-8s%-8s%-14s%-200s\n", allMessages.get(i).getMsgID(), allMessages.get(i).getFromID(), allMessages.get(i).getDateSent(), allMessages.get(i).getMessage());
             }
+            con.commit();
+            stmt.close();
+            rs.close();
             System.out.println("-----------------------------------------------------------------");
         } catch (SQLException Ex) {
             System.out.println("Message>displayMessages()  >> Error: "
@@ -356,17 +364,17 @@ public class Message {
         int topK;
         if (!isTest) {
             topK = UserInput.getInt("Enter Top K values >");
-        }else{
-            topK = 10; 
+        } else {
+            topK = 10;
         }
         // 2. get past X months
-        int pastXMonths ;
-        if (!isTest){
+        int pastXMonths;
+        if (!isTest) {
             pastXMonths = UserInput.getInt("Enter past X months >");
-        }else{
+        } else {
             pastXMonths = 10;
         }
-        
+
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MONTH, -(pastXMonths));
         java.util.Date curreSubDate = cal.getTime();
@@ -421,6 +429,9 @@ public class Message {
             }
 
             System.out.println("-------------------------------------------");
+            con.commit();
+            stmt.close();
+            rs.close();
         } catch (SQLException Ex) {
             System.out.println("Message>topMessages()  >> Error: "
                     + Ex.toString());
@@ -462,6 +473,9 @@ public class Message {
             preparedStatement.setDate(6, dateSent);
 
             ResultSet rs = preparedStatement.executeQuery();
+            con.commit();
+            stmt.close();
+            rs.close();
         } catch (SQLException Ex) {
             System.err.println("Message>insertToDb() >> Error: "
                     + Ex.toString());
