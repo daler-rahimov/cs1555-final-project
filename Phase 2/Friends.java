@@ -53,6 +53,13 @@ public class Friends {
                 }
             }
 
+            System.out.println("Are you sure you want to initiate a friendship with user " + userID2 + "?\n" +
+                    + "Options: \n"
+                    + "\t1. Yes\n"
+                    + "\t2. No\n";);
+            do{
+                System.out.println("Options: ")
+            }
             ///// 3. If not already friends, insert into pendingFriendships
             String insert = "INSERT INTO pendingFriends(fromID, toID, message)"
                     + "VALUES ("
@@ -69,7 +76,7 @@ public class Friends {
             rs.close();
 
         } catch(SQLIntegrityConstraintViolationException Ex){
-            System.out.println("You have already initiated a friendship");
+            System.out.println("You have already initiated a friendship with this user");
         } catch (SQLException Ex) {
             System.out.println("Friends >> Error: "
                     + Ex.toString());
