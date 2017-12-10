@@ -24,10 +24,10 @@ Here is how the methods provided in the specification is been divided into class
 	 - displayNewMessages (String userID)
 	 - topMessages()
   
-  - Friend: (to run: javac Friend.java; java Friend)
-     - initiateFriedship(String userID)
-     - confirmFriedship(String userID)	
-     - displayFrieds(String userID)
+  - Friends: (to run: javac Friends.java; java Friends)
+     - initiateFriendship(String userID)
+     - confirmFriendship(String userID)	
+     - displayFriends(String userID)
 
   - Group: (to run: javac Group.java; java Group)
      - createGroup(String userID)
