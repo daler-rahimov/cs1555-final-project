@@ -53,24 +53,32 @@ public class Friends {
                 }
             }
 
-            System.out.println("Are you sure you want to initiate a friendship with user " + userID2 + "?\n" +
-                    + "Options: \n"
-                    + "\t1. Yes\n"
-                    + "\t2. No\n";);
+            int selectionChoice = 0;
+
             do{
-                System.out.println("Options: ")
-            }
+                String message"Are you sure you want to initiate a friendship with user " + userID2 + "?\n" +
+                        + "Options: \n"
+                        + "\t1. Yes\n"
+                        + "\t2. No\n";
+                selectionChoice = UserInput.getInt(message);
+            } while(selectionChoice != 1 && selectionChoice != 2)
             ///// 3. If not already friends, insert into pendingFriendships
-            String insert = "INSERT INTO pendingFriends(fromID, toID, message)"
-                    + "VALUES ("
-                    + "?, "
-                    + "?, "
-                    + "?)";
-            prep = con.prepareStatement(insert);
-            prep.setString(1, userID1);
-            prep.setString(2, userID2);
-            prep.setString(3, message);
-            prep.executeUpdate();
+            if(selectionChoice == 1) {
+                String insert = "INSERT INTO pendingFriends(fromID, toID, message)"
+                        + "VALUES ("
+                        + "?, "
+                        + "?, "
+                        + "?)";
+                prep = con.prepareStatement(insert);
+                prep.setString(1, userID1);
+                prep.setString(2, userID2);
+                prep.setString(3, message);
+                prep.executeUpdate();
+
+                System.out.println("Friendship Initiated");
+            } else{
+                System.out.println("Friendship was not initiated");
+            }
 
             prep.close();
             rs.close();
