@@ -81,6 +81,7 @@ public class Friends {
                 prep.setString(3, message);
                 prep.executeUpdate();
 
+                con.commit();
                 System.out.println("Friendship Initiated");
             } else {
                 System.out.println("Friendship was not initiated");
@@ -202,6 +203,7 @@ public class Friends {
                         prep.setTimestamp(3, new Timestamp(new java.util.Date().getTime()));
                         prep.setString(4, pendingFriends.getString(2));
                         prep.executeUpdate();
+                        con.commit();
                         prep.close();
                     } catch (SQLIntegrityConstraintViolationException Ex) {
                         System.out.println("You already friends with someone selected.");
@@ -223,6 +225,7 @@ public class Friends {
                             prep.setString(1, curGroup);
                             prep.setString(2, mem.next());
                             prep.executeUpdate();
+                            con.commit();
                             prep.close();
                         } catch (SQLIntegrityConstraintViolationException Ex) {
                             System.out.println("Someone selected is already a groupmember.");
@@ -287,6 +290,7 @@ public class Friends {
                                 prep.setTimestamp(3, new Timestamp(new java.util.Date().getTime()));
                                 prep.setString(4, pendingFriends.getString(2));
                                 prep.executeUpdate();
+                                con.commit();
                                 prep.close();
                             } catch (SQLIntegrityConstraintViolationException Ex) {
                                 System.out.println("You already friends with this person.");
@@ -339,6 +343,7 @@ public class Friends {
                                     prep.setString(1, gID);
                                     prep.setString(2, userID2);
                                     prep.executeUpdate();
+                                    con.commit();
                                     prep.close();
                                 } catch (SQLIntegrityConstraintViolationException Ex) {
                                     System.out.println("This person is already in the group.");
@@ -359,6 +364,7 @@ public class Friends {
             prep = con.prepareStatement(delete);
             prep.setString(1, userID1);
             prep.executeUpdate();
+            con.commit();
 
             groupsManaged.beforeFirst();
             while (groupsManaged.next()) {
@@ -367,6 +373,7 @@ public class Friends {
                 prep = con.prepareStatement(delete);
                 prep.setString(1, groupsManaged.getString(1));
                 prep.executeUpdate();
+                con.commit();
             }
 
             prep.close();

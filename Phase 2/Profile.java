@@ -68,6 +68,7 @@ public class Profile {
 
             // create a profile instance Profile(String userID, String name, String password, java.sql.Date dateOfBirth, Timestamp lastlogin, String email)
             Profile p = new Profile(Integer.toString(nextUserID), name, password, birthdate, new Timestamp(new java.util.Date().getTime()), email);
+            con.commit();
             p.insertToDb(con);
 
             stmt.close();
@@ -93,7 +94,6 @@ public class Profile {
             ///// 1. Connect to database
             SocialPantherCon sCon = new SocialPantherCon();
             Connection con = sCon.getConnection();
-            con.setAutoCommit(false);
 
             ///// 2. Delete
             String delete = "delete from friends where userID1 = ? or userID2 = ?";
@@ -142,6 +142,8 @@ public class Profile {
             prep = con.prepareStatement(delete);
             prep.setString(1, userID);
             prep.executeUpdate();
+
+            con.commit();
 
             System.out.println("User and all data related is deleted. ");
 
@@ -419,10 +421,7 @@ public class Profile {
             prep.setTimestamp(1, getCurrentTimeStamp());
             prep.setString(2, userID);
             prep.execute();
-
-
-            ///// 3. Close connections to db, return to main menu
-            //Should I pass something back to let the program know they have logged out?
+            con.commit();
 
             prep.close();
 

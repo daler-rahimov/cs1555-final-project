@@ -163,7 +163,6 @@ public class Message {
             ////////////////////////////////////////////////////////////////////
             SocialPantherCon sCon = new SocialPantherCon();
             Connection con = sCon.getConnection();
-            con.setAutoCommit(false);
             List<Group> allGroups = new LinkedList<Group>();
 
             // get all frieds if user in in userid2
