@@ -57,12 +57,12 @@ public class Profile {
 
             ///// 2. Find next available userID
             String selectSQL = "select max(to_number(regexp_substr(userid, '\\d+')))+1 userid from PROFILE"; //// notice that "//" is escape and in sqlplues its "/"
-            PreparedStatement prep = con.preparedStatement(selectSQL);
+            PreparedStatement prep = con.prepareStatement(selectSQL);
             prep.execute(lock);
             ResultSet rs = prep.executeQuery(selectSQL);
-            int nextUserID = 0;
+            String nextUserID = null;
             if (rs.next()) {
-                nextUserID = rs.getInt(1);
+                nextUserID = rs.getString(1);
             }else {
                 System.err.print("Profile>createUser() Error getting nextMsgID");
                 exit(1);
@@ -78,7 +78,7 @@ public class Profile {
                     + ",?"
                     + ",?)";
 
-            prep = con.preparedStatement(insertSQL);
+            prep = con.prepareStatement(insertSQL);
 
             prep.setString(1, nextUserID);
             prep.setString(2, name);
