@@ -53,13 +53,12 @@ public class Profile {
             ////// 1. Connect to database
             SocialPantherCon sCon = new SocialPantherCon();
             Connection con = sCon.getConnection();
-
             String lock = "lock table Profile in exclusive mode";
-            PreparedStatment prep = con.preparedStatment();
-            prep.execut(lock);
 
             ///// 2. Find next available userID
-            String selectSQL = "select max(to_number(regexp_substr(userid, '\\d+')))+1 userid from PROFILE"; // notice that "//" is escape and in sqlplues its "/"
+            String selectSQL = "select max(to_number(regexp_substr(userid, '\\d+')))+1 userid from PROFILE"; //// notice that "//" is escape and in sqlplues its "/"
+            PreparedStatement prep = con.preparedStatement(selectSQL);
+            prep.execute(lock);
             ResultSet rs = prep.executeQuery(selectSQL);
             int nextUserID = 0;
             if (rs.next()) {
@@ -70,7 +69,7 @@ public class Profile {
             }
 
             String insertSQL = "INSERT" +
-                    " INTO profile (userid,name,password,date_of_birth,lastlogin, email) "
+                    " INTO profile (userid,name,password,date_of_birth, email) "
                     + "VALUES ("
                     + " ?"
                     + ",?"
@@ -79,23 +78,20 @@ public class Profile {
                     + ",?"
                     + ",?)";
 
-                prep = con.preparedStatement(insertSQL);
+            prep = con.preparedStatement(insertSQL);
 
-                prep.setString(1, userID);
-                prep.setString(2, name);
-                prep.setString(3, password);
-                prep.setDate(4, dateOfBirth);
-                prep.setTimestamp(5, lastlogin);
-                prep.setString(6, email);
-
-                prep.executeUpdate();
+            prep.setString(1, nextUserID);
+            prep.setString(2, name);
+            prep.setString(3, password);
+            prep.setDate(4, birthdate);
+            prep.setString(6, email);
+            prep.executeUpdate();
 
             // create a profile instance Profile(String userID, String name, String password, java.sql.Date dateOfBirth, Timestamp lastlogin, String email)
             //Profile p = new Profile(Integer.toString(nextUserID), name, password, birthdate, new Timestamp(new java.util.Date().getTime()), email);
             con.commit();
            // p.insertToDb(con);
 
-            stmt.close();
             rs.close();
 
         } catch (SQLException Ex) {
@@ -119,14 +115,13 @@ public class Profile {
             SocialPantherCon sCon = new SocialPantherCon();
             Connection con = sCon.getConnection();
             String lock = "lock table Profile in exclusive mode";
-            PreparedStatment prep = con.preparedStatment();
-            prep.execut(lock);
 
             ///// 2. Delete
             String delete = "delete from friends where userID1 = ? or userID2 = ?";
-            prep = con.prepareStatement(delete);
+            PreparedStatement prep = con.prepareStatement(delete);
             prep.setString(1, userID);
             prep.setString(2, userID);
+            prep.execute(lock);
             prep.executeUpdate();
 //            System.out.println("all deleted. ");
 
@@ -441,17 +436,16 @@ public class Profile {
             Connection con = sCon.getConnection();
 
             String lock = "lock table Profile in exclusive mode";
-            PreparedStatment prep = con.preparedStatment();
-            prep.execut(lock);
 
             ///// 2. Add current time to last logged in time
             String update = "UPDATE profile "
                     + "Set lastLogin = ?"
                     + "WHERE userid = ?";
-            prep = con.prepareStatement(update);
+            PreparedStatement prep = con.prepareStatement(update);
             prep.setTimestamp(1, getCurrentTimeStamp());
             prep.setString(2, userID);
-            prep.execute();
+            prep.execute(lock);
+            prep.executeUpdate();
             con.commit();
 
             prep.close();
