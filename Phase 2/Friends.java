@@ -39,18 +39,16 @@ public class Friends {
             SocialPantherCon sCon = new SocialPantherCon();
             Connection con = sCon.getConnection();
 
-            String lock = "lock table Friends in exclusive mode";
-            PreparedStatement prep;
-            
+            //String lock = "lock table Friends in exclusive mode";
 
             ///// 2. Check to make sure not friends by getting all of userID1's friends then looping through
             /////       to check that userID2 does not exist
             String selectSQL = "SELECT userID2\n"
                     + "FROM FRIENDS\n"
                     + "WHERE userID1 = ?";
-            prep = con.prepareStatement(selectSQL);
+            PreparedStatement prep = con.prepareStatement(selectSQL);
             prep.setString(1, userID1);
-            prep.execute(lock);
+            //prep.execute(lock);
             ResultSet rs = prep.executeQuery();
 
             while (rs.next()) {
