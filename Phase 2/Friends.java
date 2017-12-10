@@ -40,8 +40,8 @@ public class Friends {
             Connection con = sCon.getConnection();
 
             String lock = "lock table Friends in exclusive mode";
-            PreparedStatment prep = con.preparedStatment();
-            prep.execute(lock);
+            PreparedStatement prep;
+            
 
             ///// 2. Check to make sure not friends by getting all of userID1's friends then looping through
             /////       to check that userID2 does not exist
@@ -50,6 +50,7 @@ public class Friends {
                     + "WHERE userID1 = ?";
             prep = con.prepareStatement(selectSQL);
             prep.setString(1, userID1);
+            prep.execute(lock);
             ResultSet rs = prep.executeQuery();
 
             while (rs.next()) {
@@ -192,7 +193,7 @@ public class Friends {
                 //insert all friends
                 while (pendingFriends.next()) {
                     String lock = "lock table Friends in exclusive mode";
-                    prep = con.preparedStatment();
+                    
                     try {
                         prep.execute(lock);
                         String insertSQL = "INSERT INTO friends(userID1, userID2, JDate, message) VALUES(?, ?, ?, ?)";
@@ -223,7 +224,6 @@ public class Friends {
                 //insert all groupmembers
                 Iterator<String> group = groupRequests.keySet().iterator();
                 String lock = "lock table Group in exclusive mode";
-                prep = con.preparedStatment();
                 while (group.hasNext()) {
                     curGroup = group.next();
                     members = groupRequests.get(curGroup);
@@ -284,7 +284,6 @@ public class Friends {
 
                         if (canAdd) {
                             String lock = "lock table Friends in exclusive mode";
-                            prep = con.preparedStatment();
                             //look through pending friends
                             try {
                                 prep.execute(lock);
@@ -352,7 +351,6 @@ public class Friends {
 
                             if (didRequest) {
                                 String lock = "lock table Group in exclusive mode";
-                                prep = con.preparedStatment();
                                 try {
                                     prep.execute(lock);
                                     String insertSQl = "INSERT INTO groupMembership(gID, userID) VALUES(?, ?)";
