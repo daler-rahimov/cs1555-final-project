@@ -75,7 +75,6 @@ public class Profile {
                     + ",?"
                     + ",?"
                     + ",?"
-                    + ",?"
                     + ",?)";
 
             prep = con.prepareStatement(insertSQL);
@@ -84,7 +83,7 @@ public class Profile {
             prep.setString(2, name);
             prep.setString(3, password);
             prep.setDate(4, birthdate);
-            prep.setString(6, email);
+            prep.setString(5, email);
             prep.executeUpdate();
 
             // create a profile instance Profile(String userID, String name, String password, java.sql.Date dateOfBirth, Timestamp lastlogin, String email)
