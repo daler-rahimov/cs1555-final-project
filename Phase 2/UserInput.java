@@ -42,10 +42,9 @@ public class UserInput {
         return input;
     }
 
-    public static String getUserName(String message) {
+    public static String getUserName() {
         String userID;
         Scanner scanner = new Scanner(System.in);
-        System.out.println(message);
         int size;
         String input;
         do {
@@ -56,10 +55,9 @@ public class UserInput {
         return input;
     }
 
-    public static String getEmail(String message) {
+    public static String getEmail() {
         String userID;
         Scanner scanner = new Scanner(System.in);
-        System.out.println(message);
         int size;
         String input;
         do {
@@ -70,10 +68,9 @@ public class UserInput {
         return input;
     }
 
-    public static String getBDay(String message) {
+    public static String getBDay() {
         String userID;
         Scanner scanner = new Scanner(System.in);
-        System.out.println(message);
         int size;
         String input;
         do {
@@ -84,10 +81,9 @@ public class UserInput {
         return input;
     }
 
-    public static String getPassword(String message) {
+    public static String getPassword() {
         String userID;
         Scanner scanner = new Scanner(System.in);
-        System.out.println(message);
         int size;
         String input;
         do {
