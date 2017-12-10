@@ -12,7 +12,7 @@ public class GroupTest {
     public static void main(String args[]){
 //        Group.createGroup("2");
 //        Group.initiateAddingGroup("1");
-//          Group.isNTest = true;
+          Group.isNTest = true;
           Group.initiateAddingGroup("1");
     }
 }

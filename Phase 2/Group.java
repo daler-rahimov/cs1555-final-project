@@ -215,6 +215,7 @@ public class Group {
                 groupLimit = rs.getInt("gLimit");
             } else {
                 System.err.println("Group>initiateAddingGroup()  gLimit does not exist !!!");
+                return;
             }
 
             boolean isAllowed = false;
