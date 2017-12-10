@@ -115,29 +115,12 @@ public class Profile {
             Connection con = sCon.getConnection();
             String lock = "lock table Profile in exclusive mode";
 
-            String selectSQL = "SELECT userID"
-                    + "FROM Profile"
-                    + "WHERE userID = ?";
-            PreparedStatement prep = con.prepareStatement(selectSQL);
-            prep.setString(1, userID);
-            prep.execute(lock);
-            ResultSet rs = prep.executeQuery();
-
-            int count = 0;
-            if(rs.next()) {
-                count++;
-            }
-
-            if(count == 1){
-                System.out.println("User does not exist");
-                return;
-            }
-
             ///// 2. Delete
             String delete = "delete from friends where userID1 = ? or userID2 = ?";
-            prep = con.prepareStatement(delete);
+            PreparedStatement prep = con.prepareStatement(delete);
             prep.setString(1, userID);
             prep.setString(2, userID);
+            prep.execute(lock);
             prep.executeUpdate();
 //            System.out.println("all deleted. ");
 
@@ -179,11 +162,15 @@ public class Profile {
             delete = "DELETE FROM profile WHERE userid = ?";
             prep = con.prepareStatement(delete);
             prep.setString(1, userID);
-            prep.executeUpdate();
+            int count = prep.executeUpdate();
 
             con.commit();
 
-            System.out.println("User and all data related is deleted. ");
+            if(count == 0){
+                System.out.println("User does not exist");
+            }else{
+                System.out.println("User and all data related is deleted. ");
+            }
 
             prep.close();
 

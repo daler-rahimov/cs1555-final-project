@@ -56,6 +56,10 @@ public class MainTest {
         Profile.dropUser("10");
         System.out.println("**************************");
 
+        System.out.println("User 10 is being dropped again");
+        Profile.dropUser("10");
+        System.out.println("**************************");
+
         System.out.println("A new user was created");
         Profile.createUser();
         System.out.println("**************************");
