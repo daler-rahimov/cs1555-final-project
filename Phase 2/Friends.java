@@ -43,12 +43,14 @@ public class Friends {
                     + "WHERE userID1 = ?";
             PreparedStatement prep = con.prepareStatement(selectSQL);
             prep.setString(1, userID1);
-            //prep.setString(1, userID1);
             ResultSet rs = prep.executeQuery();
 
             while(rs.next()){
-                if(rs.getString(1).equals(userID2))
+                if(rs.getString(1).equals(userID2)) {
+                    System.out.println("Friend is: " + rs.getString(1));
                     System.out.println("Already friends");
+                    return;
+                }
             }
 
             ///// 3. If not already friends, insert into pendingFriendships
