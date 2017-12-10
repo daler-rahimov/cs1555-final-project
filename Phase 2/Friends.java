@@ -56,12 +56,9 @@ public class Friends {
             int selectionChoice = 0;
 
             do{
-                String message"Are you sure you want to initiate a friendship with user " + userID2 + "?\n" +
-                        + "Options: \n"
-                        + "\t1. Yes\n"
-                        + "\t2. No\n";
-                selectionChoice = UserInput.getInt(message);
-            } while(selectionChoice != 1 && selectionChoice != 2)
+                String message1 = "Are you sure you want to initiate a friendship with user " + userID2 + "?\n" + "Options: \n" + "\t1. Yes\n"+ "\t2. No\n";
+                selectionChoice = UserInput.getInt(message1);
+            } while(selectionChoice != 1 && selectionChoice != 2);
             ///// 3. If not already friends, insert into pendingFriendships
             if(selectionChoice == 1) {
                 String insert = "INSERT INTO pendingFriends(fromID, toID, message)"
