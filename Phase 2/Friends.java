@@ -15,13 +15,13 @@ public class Friends {
      *
      * @param userID1
      */
-    public static Boolean initiateFriendship(String userID1){
+    public static void initiateFriendship(String userID1){
         //make user input here
         String userID2, message;
 
         if(!isTest) {
 
-            System.out.print("Please enter the ID of the user you would like to befriend: ");
+            System.out.println("Please enter the ID of the user you would like to befriend");
             userID2 = UserInput.getID();
 
             String inputMessage = "Please enter a message you would like to send to this user: ";
@@ -48,7 +48,7 @@ public class Friends {
 
             while(rs.next()){
                 if(rs.getString(1).equals(userID2))
-                    return false;
+                    System.out.println("Already friends");
             }
 
             ///// 3. If not already friends, insert into pendingFriendships
@@ -66,15 +66,12 @@ public class Friends {
             prep.close();
             rs.close();
 
-            return true;
-
         } catch(SQLIntegrityConstraintViolationException Ex){
             System.out.println("You have already initiated a friendship");
         } catch (SQLException Ex) {
             System.out.println("Friends >> Error: "
                     + Ex.toString());
         }
-        return false;
     }
 
     /**
@@ -102,8 +99,8 @@ public class Friends {
 
             System.out.println("Here are all your friend requests: ");
             while(pendingFriends.next()){
-                System.out.println(pendingFriends.getString(1)
-                        + "\n\t" + pendingFriends.getString(2));
+                System.out.println("\tUser " + pendingFriends.getString(1)
+                        + " : " + pendingFriends.getString(2));
             }
 
             pendingFriends.beforeFirst();
@@ -131,8 +128,8 @@ public class Friends {
                 System.out.println("Here are all your group requests for group " + groupsManaged.getString(1) + " : ");
                 while(pendingGroups.next()){
                     members.add(pendingGroups.getString(1));
-                    System.out.println(pendingGroups.getString(1)
-                            + "\n\t" + pendingGroups.getString(2));
+                    System.out.println("\tUser " + pendingGroups.getString(1)
+                            + " : " + pendingGroups.getString(2));
                 }
                 groupRequests.put(groupsManaged.getString(1), members);
                 members.clear();
@@ -413,7 +410,7 @@ public class Friends {
 
             //create iterator to display all the choices
             Iterator<String> it = toDisplay.iterator();
-            System.out.println("Here is a list of your friends and their friends: ");
+            System.out.println("Here is a list of IDs that are your friends and their friends: ");
             while(it.hasNext()){
                 System.out.println("\t" + it.next());
             }
@@ -451,11 +448,11 @@ public class Friends {
                     ResultSet rs = prep.executeQuery();
 
                     rs.next();
-                    System.out.println("UserID: " + userID2
-                            + "\nName: " + rs.getString(2)
-                            + "\nEmail: " + rs.getString(3)
-                            + "\nDate of Birth: " + rs.getDate(4)
-                            + "\nLast Login: " + rs.getDate(5));
+                    System.out.println("\tUserID: " + userID2
+                            + "\n\tName: " + rs.getString(2)
+                            + "\n\tEmail: " + rs.getString(3)
+                            + "\n\tDate of Birth: " + rs.getDate(4)
+                            + "\n\tLast Login: " + rs.getDate(5));
 
                     message = "Would you like to look up another profile?\n"
                             + "Options: \n"
