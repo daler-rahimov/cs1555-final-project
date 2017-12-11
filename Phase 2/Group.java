@@ -1,9 +1,6 @@
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.*;
 
 public class Group {
 
@@ -251,7 +248,7 @@ public class Group {
             con.commit();
             rs.close();
         } catch (SQLIntegrityConstraintViolationException Ex) {
-            System.out.println("You have already tried to join this group, confirmation is still pending")
+            System.out.println("You have already tried to join this group, confirmation is still pending");
         } catch (SQLException Ex) {
             System.out.println("Group>initiateAddingGroup() >> Error: "
                     + Ex.toString());
