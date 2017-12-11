@@ -41,8 +41,8 @@ public class SocialPantherCon {
     public SocialPantherCon() throws SQLException {
         if (!(connection instanceof Connection)) {
             String username, password;
-            username = "mel118"; //This is your username in oracle
-            password = "psswrd!"; //This is your password in oracle
+            username = "dar158"; //This is your username in oracle
+            password = "password"; //This is your password in oracle
             try {
                 // Register the oracle driver.  
                 DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
