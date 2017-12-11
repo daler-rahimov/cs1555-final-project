@@ -1,8 +1,6 @@
 Things to add/do:
 	1. people can only message groups they are in
 	
-	2. Break confirmFriendships into smaller methods
-	
 	3. Add to ReadMe that friendShips are shown both ways for simplification purposes
 	
 	4. Fix current friends Table to show the friendships of all going to opposite way
