@@ -17,7 +17,7 @@ create table groups (
 	gID varchar2(20)
 	, name varchar2(50) not null 
 	, description varchar2(200)
-	, gLimit number
+	, gLimit integer
 	, constraint pk_groups primary key (gID) deferrable initially immediate
 );
 

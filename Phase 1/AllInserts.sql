@@ -98,13 +98,13 @@ INSERT INTO profile (userid,name,password,date_of_birth,lastlogin) VALUES ('96',
 INSERT INTO profile (userid,name,password,date_of_birth,lastlogin) VALUES ('97','Nathaniel','SLU25PAL1ZZ','26-Sep-66','10-Nov-17');
 INSERT INTO profile (userid,name,password,date_of_birth,lastlogin) VALUES ('98','Ori','NAM79EIN8NO','02-Dec-95','08-Sep-17');
 INSERT INTO profile (userid,name,password,date_of_birth,lastlogin) VALUES ('99','MacKenzie','ZTW49JPT8XH','18-Apr-65','21-Feb-17');
-INSERT INTO profile (userid,name,password,date_of_birth,lastlogin) VALUES ('100','Autumn','XQN14LUJ6WF','17-Dec-87','14-Aug-18');
+INSERT INTO profile (userid,name,password,date_of_birth,lastlogin) VALUES ('100','Autumn','XQN14LUJ6WF','17-Dec-87','14-Aug-14');
 INSERT INTO profile (userid,name,password,date_of_birth,lastlogin) VALUES ('101','Andy','XQP17LUQ6WF','17-Dec-87','14-Aug-18');
 
 
 ---------- 10 groups ----------------
-INSERT INTO groups (gID,name,description) VALUES (1,'Fusce Institute','feugiat tellus lorem eu metus. In lorem. Donec elementum, lorem ut aliquam iaculis,');
-INSERT INTO groups (gID,name,description) VALUES (2,'Diam At Pretium Corp.','Duis sit amet diam');
+INSERT INTO groups (gID,name,description, glimit) VALUES (1,'Fusce Institute','feugiat tellus lorem eu metus. In lorem. Donec elementum, lorem ut aliquam iaculis,', 6);
+INSERT INTO groups (gID,name,description, glimit) VALUES (2,'Diam At Pretium Corp.','Duis sit amet diam', 5);
 INSERT INTO groups (gID,name,description) VALUES (3,'Consectetuer LLC','ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;');
 INSERT INTO groups (gID,name,description) VALUES (4,'Lobortis Tellus Justo Institute','eget nisi dictum augue malesuada malesuada. Integer id magna et ipsum cursus vestibulum. Mauris magna. Duis');
 INSERT INTO groups (gID,name,description) VALUES (5,'Sodales Nisi Magna PC','Nullam lobortis quam a felis ullamcorper viverra. Maecenas iaculis aliquet diam. Sed diam lorem, auctor quis,');
