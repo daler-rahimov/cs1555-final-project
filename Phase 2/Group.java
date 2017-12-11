@@ -250,6 +250,8 @@ public class Group {
 //            con.close();
             con.commit();
             rs.close();
+        } catch (SQLIntegrityConstraintViolationException Ex) {
+            System.out.println("You have already tried to join this group, confirmation is still pending")
         } catch (SQLException Ex) {
             System.out.println("Group>initiateAddingGroup() >> Error: "
                     + Ex.toString());
