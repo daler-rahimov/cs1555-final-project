@@ -188,7 +188,6 @@ public class Profile {
     public static void threeDegrees() {
         String userID1, userID2;
 
-
         //potentially add multiple flags to show that each type of path works
         if(!isTest) {
             System.out.print("Please enter first ID: ");

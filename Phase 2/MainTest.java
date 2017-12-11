@@ -104,6 +104,7 @@ public class MainTest {
             }
             System.out.println("**************************");
             System.out.println("Testing threeDegrees between user 43 and 48, full 3 hops");
+            Profile.threeDegrees();
             System.out.println("**************************");
 
             System.out.println("We will search for users that match \"12\", \"Bob\", \"Gabby\"");
