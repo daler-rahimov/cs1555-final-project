@@ -38,6 +38,7 @@ The automated test class is in MainTest.java all the inputs are hardcoded into t
    - javac MainTest.java
    - java MainTest
    - For some of the tests, function will show error catching capabilities if the program is run twice without resetting the database.
+   - All classes needed to run MainTest are in phase 2 folder
 
 
 ## Application Assumptions
