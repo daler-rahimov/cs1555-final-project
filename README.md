@@ -48,3 +48,4 @@ The automated test class is in MainTest.java all the inputs are hardcoded into t
   - The b date is not requried 
   - Any entery in friends table has 2 way friendship. E.g. Bob -> Mary and Mary -> Bob
   - Messages with friend and group requests are not added to Message Table
+  - LastLogin only shows last date
