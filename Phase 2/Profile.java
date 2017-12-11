@@ -448,7 +448,7 @@ public class Profile {
                     + "Set lastLogin = ?"
                     + "WHERE userid = ?";
             PreparedStatement prep = con.prepareStatement(update);
-            prep.setTimestamp(1, getCurrentTimeStamp());
+            prep.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
             prep.setString(2, userID);
             prep.execute(lock);
             prep.executeUpdate();
@@ -461,11 +461,11 @@ public class Profile {
         }
     }
 
-    private static java.sql.Timestamp getCurrentTimeStamp() {
+    /*private static java.sql.Timestamp getCurrentTimeStamp() {
 
         java.util.Date today = new java.util.Date();
         return new java.sql.Timestamp(today.getTime());
-    }
+    }*/
 
     private String userID;
     private String name;
