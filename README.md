@@ -37,6 +37,7 @@ Here is how the methods provided in the specification is been divided into class
 The automated test class is in MainTest.java all the inputs are hardcoded into the source code. All test output will be writen to stdout. To Run 
    - javac MainTest.java
    - java MainTest
+   - For some of the tests, function will show error catching capabilities if the program is run twice without resetting the database.
 
 
 ## Application Assumptions
@@ -46,6 +47,5 @@ The automated test class is in MainTest.java all the inputs are hardcoded into t
 ## Data model/design Assumptions
 
   - The b date is not requried 
-  - Any entery in friends table has 2 way friendship. E.g. Bob -> Mary and Mary -> Bob
+  - Any entry in friends table has 2 way friendship. E.g. Bob -> Mary and Mary -> Bob
   - Messages with friend and group requests are not added to Message Table
-  - LastLogin only shows last date
